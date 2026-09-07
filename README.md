@@ -6,7 +6,7 @@
 [![API](https://img.shields.io/badge/Paper-1.21%2B%20%7C%2026.x-brightgreen.svg)](https://papermc.io/)
 [![Folia](https://img.shields.io/badge/Folia-supported-success.svg)](https://papermc.io/software/folia)
 [![Java](https://img.shields.io/badge/Java-21%2B-orange.svg)](https://openjdk.org/)
-[![License](https://img.shields.io/badge/license-see%20repository-lightgrey.svg)](https://github.com/MonkeyMoon104/KTPlus)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Spigot](https://img.shields.io/badge/Spigot-125998-yellow.svg)](https://www.spigotmc.org/resources/125998/)
 
 ---
