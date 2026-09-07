@@ -1,0 +1,61 @@
+# Dependabot for KTPlus
+# Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    target-branch: enhanced
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: Europe/Rome
+    open-pull-requests-limit: 8
+    labels:
+      - dependencies
+      - gradle
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      jackson:
+        patterns:
+          - "com.fasterxml.jackson*"
+      flyway:
+        patterns:
+          - "org.flywaydb*"
+      junit:
+        patterns:
+          - "org.junit*"
+      okhttp-okio:
+        patterns:
+          - "com.squareup.okhttp3*"
+          - "com.squareup.okio*"
+      gradle-plugins:
+        patterns:
+          - "com.gradleup.shadow*"
+          - "org.gradle.toolchains*"
+    ignore:
+      # Vendored patched builds in build-logic/repo (not on Maven Central).
+      - dependency-name: "io.papermc.paperweight.userdev*"
+      - dependency-name: "io.papermc.paperweight:paperweight-userdev"
+      - dependency-name: "com.github.stefvanschie.inventoryframework:IF"
+      # Paper version lines are pinned per NMS module / dynamic ranges.
+      - dependency-name: "io.papermc.paper:paper-api"
+      - dependency-name: "io.papermc.paper:dev-bundle"
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: enhanced
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: Europe/Rome
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: chore
+      include: scope
