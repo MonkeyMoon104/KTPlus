@@ -1,0 +1,61 @@
+name: KTPlus
+version: '${version}'
+main: com.monkey.ktplus.KTPlus
+api-version: '1.21'
+folia-supported: true
+authors:
+  - MonkeyMoon104
+softdepend:
+  - Vault
+  - LuckPerms
+  - WorldGuard
+  - PlaceholderAPI
+libraries:
+  - com.fasterxml.jackson.core:jackson-databind:${jackson}
+  - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jackson}
+  - io.github.revxrsal:lamp.common:${lamp}
+  - io.github.revxrsal:lamp.bukkit:${lamp}
+  - org.spongepowered:configurate-yaml:${configurate}
+  - com.github.ben-manes.caffeine:caffeine:${caffeine}
+  - com.zaxxer:HikariCP:${hikaricp}
+  - org.slf4j:slf4j-nop:${slf4j}
+  - org.xerial:sqlite-jdbc:${sqlite}
+  - com.mysql:mysql-connector-j:${mysql}
+  - org.mariadb.jdbc:mariadb-java-client:${mariadb}
+  - org.postgresql:postgresql:${postgresql}
+  - org.flywaydb:flyway-core:${flyway}
+  - org.flywaydb:flyway-mysql:${flyway}
+  - org.flywaydb:flyway-database-postgresql:${flyway}
+  - com.squareup.okhttp3:okhttp-jvm:${okhttp}
+commands:
+  ktplus:
+    description: Open and manage kill effects.
+    usage: /<command> [reload|set|clear|test|killcoins|review|migrate]
+    aliases:
+      - kt
+      - killeffect
+permissions:
+  ktplus.admin:
+    default: op
+  ktplus.admin.bypass:
+    default: op
+  ktplus.reload:
+    default: op
+  ktplus.migrate:
+    default: op
+  ktplus.set:
+    default: true
+  ktplus.set.others:
+    default: op
+  ktplus.clear:
+    default: true
+  ktplus.clear.others:
+    default: op
+  ktplus.test:
+    default: op
+  ktplus.killcoins:
+    default: true
+  ktplus.killcoins.admin:
+    default: op
+  ktplus.worldguard.bypass:
+    default: op
