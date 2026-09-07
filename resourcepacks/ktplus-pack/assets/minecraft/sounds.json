@@ -1,0 +1,8 @@
+{
+  "ktplus.hs1": {
+    "sounds": [{ "name": "ktplus/hs1", "volume": 1.0 }]
+  },
+  "ktplus.aurab": {
+    "sounds": [{ "name": "ktplus/aurab", "volume": 1.0 }]
+  }
+}
