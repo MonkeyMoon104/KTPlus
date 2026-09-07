@@ -1,0 +1,80 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.papermc.paperweight",
+    "module": "paperweight-userdev",
+    "version": "2.0.0-beta.23-ktplus.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.3.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "paperweight-userdev-2.0.0-beta.23-ktplus.1-sources.jar",
+          "url": "paperweight-userdev-2.0.0-beta.23-ktplus.1-sources.jar",
+          "size": 163053,
+          "sha512": "ad9314479cdf828fa568ec4390d41c19e5f7b3e3283055584caca576cf0df0bffa8797278c77b4ed0fc28ba7e47aee3f67ba18a0660ebd6d72443409778e63c0",
+          "sha256": "cb79fa1963cd485f623623f4bf91a559794d1b676001c18632721b1dc0c2116e",
+          "sha1": "32d961cd88bf554544bbe3bd67c419aab94f5fa5",
+          "md5": "82c5d5f327b443041e89f583856411dd"
+        }
+      ]
+    },
+    {
+      "name": "shadowRuntimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "shadowed",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.plugin.api-version": "9.0.0",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "paperweight-userdev-2.0.0-beta.23-ktplus.1.jar",
+          "url": "paperweight-userdev-2.0.0-beta.23-ktplus.1.jar",
+          "size": 9320664,
+          "sha512": "43c80ceab0f4e5bb7e8c8fac70a12860bc8eb988337bb4850fa8867b1d691b99d0bb531409d0ca290db09ceea2f7169661d9e593d2b2eacc38afc77fb40dd08e",
+          "sha256": "6d8379ff4e8e8304db5345e042d19e99fe978520dcb913bfe39a8f13918bb3e0",
+          "sha1": "1bfdca610290effc6a793c0d6a2039ec324816b9",
+          "md5": "d0afb0d190ae484ac6010890748d9245"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "paperweight-userdev-2.0.0-beta.23-ktplus.1-javadoc.jar",
+          "url": "paperweight-userdev-2.0.0-beta.23-ktplus.1-javadoc.jar",
+          "size": 261,
+          "sha512": "1487e5a20c9e4d74f298e07c42e96a61be11b7a768c3fbc199ee138cd68e1fc2267d1cfe3f11f288acc05df755315344d052cc5f6f751f126ab4fe1caa5125ea",
+          "sha256": "c6deada2fac53b8ea6523dbda77597b128006674616f140f04df23264c6d1aa3",
+          "sha1": "2ad14aed781c4a73ed4dbb421966d408a0a06686",
+          "md5": "f43436d6bec321290f6af228ad602604"
+        }
+      ]
+    }
+  ]
+}
