@@ -1,0 +1,10 @@
+enabled: true
+
+money-fountain:
+  enabled: true
+  chance: 0.02
+  amount: 25
+
+meteor-shower:
+  enabled: true
+  chance: 0.02

@@ -1,0 +1,9 @@
+database:
+  type: "sqlite"
+  file: "ktplus.db"
+  host: "localhost"
+  port: 3306
+  database: "ktplus"
+  username: "root"
+  password: ""
+  pool-size: 5

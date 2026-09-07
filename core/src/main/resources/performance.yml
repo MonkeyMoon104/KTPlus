@@ -1,0 +1,10 @@
+enabled: true
+preset: "balanced"
+max-active-sessions-per-player: 2
+max-heavy-sessions-global: 12
+effect-cooldown-millis: 500
+
+adaptive-tps:
+  enabled: true
+  low-tps-threshold: 18.0
+  critical-tps-threshold: 15.0

@@ -1,0 +1,14 @@
+enabled: true
+
+provider: KILLCOINS
+
+starting-balance: 0
+
+kill-reward:
+  enabled: true
+  player: 10
+  mob: 1
+
+currency:
+  singular: "coin"
+  plural: "coins"

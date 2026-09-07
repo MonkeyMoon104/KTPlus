@@ -1,0 +1,15 @@
+config-version: "4.0.0"
+
+disabled-worlds: []
+
+worldguard:
+  block-changes: RESPECT
+  respect-build-flag: true
+  bypass-permission: "ktplus.worldguard.bypass"
+
+luckperms:
+  grant-permission-on-purchase: true
+
+schematics:
+  default-fallback: STONE
+  log-unresolved: true

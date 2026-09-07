@@ -1,0 +1,1037 @@
+categories:
+  common:
+    min-price: 0
+
+  non-common:
+    min-price: 5000
+
+  rare:
+    min-price: 25000
+
+  very-rare:
+    min-price: 75000
+
+  epic:
+    min-price: 200000
+
+  legendary:
+    min-price: 500000
+
+  ultra:
+    min-price: 1000000
+
+effects:
+  cloud:
+    category: common
+    price: 500
+    perks:
+      radius: 12
+      open-ticks: 50
+      link-ticks: 120
+      slow:
+        amplifier: 1
+    damage:
+      enabled: true
+      value: 1
+      radius: 3
+
+  smoke:
+    category: common
+    price: 750
+    perks:
+      chain: true
+      max-chain-depth: 2
+      crater-radius: 2.4
+      build-ticks: 80
+      erupt-ticks: 28
+    damage:
+      enabled: true
+      value: 3
+      radius: 9
+
+  hearts:
+    category: common
+    price: 500
+    perks:
+      count: 10
+      seek-radius: 12
+      heal-per-heart: 2.0
+      speed: 0.55
+      max-ticks: 110
+    damage:
+      enabled: true
+      value: 2
+      radius: 12
+
+  notes:
+    category: common
+    price: 1000
+    perks:
+      range: 12
+      charge-ticks: 70
+      disc-count: 10
+      disc-interval-ticks: 5
+      speed: 0.62
+    damage:
+      enabled: true
+      value: 2
+      radius: 12
+
+  earthquake:
+    category: common
+    price: 800
+    perks:
+      radius: 14
+      shake-ticks: 80
+      max-blocks: 110
+      amplitude: 0.24
+      frequency: 1.85
+      wave-width: 2.2
+      bounce-strength: 1.15
+      debris: true
+    damage:
+      enabled: true
+      value: 4
+      radius: 14
+
+  tornado:
+    category: rare
+    price: 3500
+    perks:
+      hunt-ticks: 200
+      max-hunt-ticks: 300
+      seek-range: 40
+      hit-cooldown-ticks: 18
+      throw-fuse-min-ticks: 12
+      throw-fuse-max-ticks: 28
+      throw-blast-radius: 2.6
+      throw-damage-multiplier: 0.45
+      levels:
+        f1:
+          base-radius: 1.15
+          height: 6.0
+          speed: 0.11
+          hit-radius: 1.35
+          rip-radius: 2.2
+          spin-speed: 0.18
+          max-blocks: 5
+          damage-multiplier: 1.0
+          knockback: 0.75
+        f2:
+          base-radius: 1.55
+          height: 7.5
+          speed: 0.14
+          hit-radius: 1.7
+          rip-radius: 2.8
+          spin-speed: 0.22
+          max-blocks: 9
+          damage-multiplier: 1.35
+          knockback: 0.95
+        f3:
+          base-radius: 2.05
+          height: 9.0
+          speed: 0.17
+          hit-radius: 2.15
+          rip-radius: 3.5
+          spin-speed: 0.26
+          max-blocks: 14
+          damage-multiplier: 1.8
+          knockback: 1.15
+        f4:
+          base-radius: 2.65
+          height: 11.0
+          speed: 0.20
+          hit-radius: 2.7
+          rip-radius: 4.3
+          spin-speed: 0.30
+          max-blocks: 19
+          damage-multiplier: 2.3
+          knockback: 1.4
+        f5:
+          base-radius: 3.35
+          height: 13.0
+          speed: 0.24
+          hit-radius: 3.4
+          rip-radius: 5.2
+          spin-speed: 0.35
+          max-blocks: 26
+          damage-multiplier: 2.9
+          knockback: 1.7
+    damage:
+      enabled: true
+      value: 2
+      radius: 4
+
+  end:
+    category: non-common
+    price: 250
+    perks:
+      enderman-count: 5
+      portal-duration-seconds: 5
+      target-range: 24
+      portal-radius: 2.5
+    damage:
+      enabled: true
+      value: 4
+      radius: 6
+
+  headcollector:
+    category: rare
+    price: 2500
+    head-collector-settings:
+      collection:
+        max-heads: 5
+        inherit-heads: true
+      orbit:
+        radius: 1.25
+        height: 0.95
+        speed: 0.085
+        head-spin-speed: 0.026
+        trail-interval: 2
+      action-bar:
+        ready-label: "READY"
+      missile:
+        rise-ticks: 5
+        strike-ticks: 10
+        gap-ticks: 2
+      formation:
+        hold-ticks: 10
+        spacing: 0.82
+        distance: 1.85
+        height: 1.35
+    perks:
+      attack-damage: 4.0
+      attack-damage-per-head: 1.5
+      health-per-head: 2.0
+
+  totem:
+    category: non-common
+    price: 500
+    damage:
+      enabled: true
+      value: 4
+      radius: 5
+
+  lightning:
+    category: non-common
+    price: 200
+    perks:
+      chain: true
+      max-chain-depth: 3
+      radar:
+        range: 12
+        speed: 0.55
+        period-ticks: 2
+    damage:
+      enabled: true
+      value: 5
+      radius: 4
+
+  grave:
+    category: non-common
+    price: 500
+
+  explosion:
+    category: rare
+    price: 500
+    damage:
+      enabled: true
+      value: 5
+      radius: 5
+
+  mace:
+    category: rare
+    price: 1000
+    damage:
+      enabled: true
+      value: 5
+      radius: 16
+
+  skeleton:
+    category: rare
+    price: 2000
+
+  sniper:
+    category: very-rare
+    price: 2000
+    perks:
+      rise-ticks: 28
+      tilt-ticks: 32
+      fire-ticks: 90
+      close-ticks: 30
+      head-height: 1.62
+      seek-range: 24
+      fire-interval-ticks: 22
+      arrow-speed: 2.8
+      track-lead: 0.2
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
+
+  glowmissile:
+    category: very-rare
+    price: 3000
+    perks:
+      debris-damage: 3.0
+      debris-radius: 1.4
+    damage:
+      enabled: true
+      value: 8
+      radius: 5
+
+  shockwave:
+    category: very-rare
+    price: 4000
+    damage:
+      enabled: true
+      value: 1
+      radius: 7
+
+  enchantcolumn:
+    category: very-rare
+    price: 5000
+    perks:
+      potion:
+        type: REGENERATION
+        amplifier: 1
+        duration: 10
+    damage:
+      enabled: true
+      value: 10
+      radius: 10
+
+  fireworks:
+    category: epic
+    price: 6000
+    structure: true
+    fireworks-settings:
+      radar:
+        range: 12
+        speed: 0.5
+        period-ticks: 2
+      marking:
+        foot-update-ticks: 2
+    perks:
+      fireworks-per-player: 3
+      interval-ticks: 8
+      damage:
+        enabled: true
+        value: 2.0
+
+  aurafarming:
+    category: epic
+    price: 7000
+    perks:
+      boost:
+        damage:
+          amplifier: 2
+          duration: 20
+        potion:
+          type: REGENERATION
+          amplifier: 2
+          duration: 10
+      push:
+        enabled: true
+        damage-per-seconds: 2
+    damage:
+      enabled: true
+      value: 10
+      radius: 20
+
+  dimensionalrift:
+    category: epic
+    price: 9000
+    perks:
+      max-rifts: 8
+      duration-ticks: 160
+      open-ticks: 10
+      fire-delay-ticks: 8
+      close-ticks: 6
+      spawn-radius: 6
+      seek-range: 28
+      bolt-speed: 0.95
+      bolt-damage: 4.0
+    damage:
+      enabled: true
+      value: 6
+      radius: 7
+
+  firephoenix:
+    category: epic
+    price: 10000
+    perks:
+      projectiles:
+        enabled: true
+        damage: true
+        range: 24
+        delay: 3
+        value: 4
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  prismaticnova:
+    category: epic
+    price: 12000
+    damage:
+      enabled: true
+      value: 6
+      radius: 8
+
+  stellarcollapse:
+    category: legendary
+    price: 15000
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  voidlotus:
+    category: legendary
+    price: 10000
+    damage:
+      enabled: true
+      value: 7
+      radius: 9
+
+  wither:
+    category: legendary
+    price: 25000
+    damage:
+      enabled: true
+      value: 7
+      radius: 4
+
+  warden:
+    category: ultra
+    price: 50000
+    damage:
+      enabled: true
+      value: 7
+      radius: 6
+
+  magnet:
+    category: common
+    price: 600
+    perks:
+      pull-radius: 14
+      pull-strength: 0.18
+      duration-ticks: 120
+      max-targets: 6
+      core-damage-radius: 2.2
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  bubbletrap:
+    category: non-common
+    price: 1200
+    perks:
+      bubble-count: 6
+      trap-ticks: 45
+      seek-range: 14
+      slow-amplifier: 1
+      pop-damage: 2.5
+      move-speed: 0.22
+      duration-ticks: 160
+    damage:
+      enabled: true
+      value: 2
+      radius: 4
+
+  inksquid:
+    category: common
+    price: 700
+    perks:
+      tentacle-count: 8
+      slap-damage: 2.0
+      seek-range: 12
+      blind-ticks: 40
+      lash-interval: 8
+      duration-ticks: 140
+      attack-radius: 3.1
+      min-center-distance: 2.35
+    damage:
+      enabled: true
+      value: 2
+      radius: 5
+
+  beeswarm:
+    category: common
+    price: 800
+    perks:
+      bee-count: 7
+      sting-interval: 7
+      poison-seconds: 2
+      aggro-radius: 16
+      max-stings: 3
+      speed: 0.42
+      duration-ticks: 180
+    damage:
+      enabled: true
+      value: 1
+      radius: 2
+
+  sandstorm:
+    category: non-common
+    price: 1100
+    perks:
+      wave-width: 8
+      wave-length: 14
+      wave-speed: 0.28
+      push-strength: 0.55
+      blind-chance: 0.35
+      duration-ticks: 100
+    damage:
+      enabled: true
+      value: 3
+      radius: 6
+
+  lightningrod:
+    category: rare
+    price: 2200
+    perks:
+      max-jumps: 5
+      jump-range: 10
+      damage-falloff: 0.75
+      charge-ticks: 25
+      rod-height: 2.4
+      attack-interval-ticks: 18
+      hit-cooldown-ticks: 16
+      max-level: 10
+      range-per-level: 0.55
+      damage-per-level: 0.35
+    damage:
+      enabled: true
+      value: 4
+      radius: 10
+
+  boomerang:
+    category: rare
+    price: 1800
+    perks:
+      count: 3
+      range: 12
+      speed: 0.55
+      hit-damage: 2.5
+      return-heal: 1.0
+    damage:
+      enabled: true
+      value: 2
+      radius: 2
+
+  mirrorclone:
+    category: rare
+    price: 2500
+    perks:
+      clone-duration: 70
+      explode-radius: 3.5
+      damage: 5
+      aggro-range: 18
+      speed: 0.38
+    damage:
+      enabled: true
+      value: 5
+      radius: 4
+
+  geyser:
+    category: rare
+    price: 2000
+    perks:
+      height: 7
+      lift-ticks: 16
+      slam-damage: 4
+      radius: 3.5
+      wet-slow-amplifier: 1
+      wet-slow-ticks: 40
+    damage:
+      enabled: true
+      value: 4
+      radius: 4
+
+  cactusbarrage:
+    category: rare
+    price: 1700
+    perks:
+      spine-count: 16
+      spread: 0.45
+      speed: 0.65
+      stick-ticks: 25
+      bleed-damage: 1.5
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  blackhole:
+    category: very-rare
+    price: 4500
+    perks:
+      suck-radius: 8
+      suck-strength: 0.2
+      collapse-ticks: 80
+      burst-damage: 6
+      levels:
+        enabled: true
+        s1:
+          radius: 6.5
+        s2:
+          radius: 8.5
+        s3:
+          radius: 10.5
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
+
+  clockrewind:
+    category: very-rare
+    price: 4200
+    perks:
+      rewind-ticks: 35
+      freeze-ticks: 15
+      radius: 7
+      damage-on-snap: 4
+      tick-rate: 4
+    damage:
+      enabled: true
+      value: 4
+      radius: 7
+
+  railgun:
+    category: epic
+    price: 8500
+    perks:
+      charge-ticks: 28
+      beam-length: 28
+      pierce-count: 4
+      damage: 7
+      knockback: 1.4
+    damage:
+      enabled: true
+      value: 7
+      radius: 3
+
+  puppetstrings:
+    category: epic
+    price: 9000
+    perks:
+      max-puppets: 3
+      lift-height: 5
+      control-ticks: 60
+      drop-damage: 6
+      string-break-radius: 10
+    damage:
+      enabled: true
+      value: 6
+      radius: 5
+
+  alchemy:
+    category: epic
+    price: 7500
+    perks:
+      brew-ticks: 40
+      splash-count: 5
+      radius: 5
+      bonus-hit-upgrade: true
+    damage:
+      enabled: true
+      value: 3
+      radius: 5
+
+  crystalspire:
+    category: epic
+    price: 9500
+    perks:
+      spire-count: 5
+      grow-ticks: 35
+      shard-count: 18
+      shard-damage: 2.5
+      seek-radius: 14
+      shard-speed: 0.5
+    damage:
+      enabled: true
+      value: 3
+      radius: 4
+
+  dragonnest:
+    category: legendary
+    price: 14000
+    perks:
+      rings: 3
+      orbit-speed: 0.2
+      advance-speed: 0.12
+      burn-seconds: 3
+      hatch-ticks: 28
+      max-level: 3
+      duration-ticks: 160
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
+
+  gravitywell:
+    category: legendary
+    price: 16000
+    perks:
+      well-count: 3
+      move-speed: 0.1
+      pull: 0.22
+      slam-damage: 5
+      merge-on-hit: true
+      hunt-ticks: 200
+    damage:
+      enabled: true
+      value: 5
+      radius: 6
+
+  arcade:
+    category: legendary
+    price: 13000
+    perks:
+      enemy-count: 8
+      wave-count: 3
+      hit-score-to-upgrade: 4
+      duration-ticks: 220
+      enemy-speed: 0.28
+    damage:
+      enabled: true
+      value: 3
+      radius: 3
+
+  kaiju:
+    category: legendary
+    price: 18000
+    perks:
+      shadow-ticks: 16
+      stomp-damage: 8
+      shockwave-radius: 10
+      debris-max: 20
+      aftershock-count: 2
+    damage:
+      enabled: true
+      value: 8
+      radius: 10
+
+  sparkler:
+    category: common
+    price: 550
+    perks:
+      spark-count: 12
+      bounce-ticks: 80
+      burn-seconds: 2
+      radius: 4
+      duration-ticks: 140
+    damage:
+      enabled: true
+      value: 1
+      radius: 3
+
+  snowballstorm:
+    category: common
+    price: 650
+    perks:
+      count: 18
+      spread: 0.5
+      slow-ticks: 40
+      speed: 0.55
+      duration-ticks: 130
+    damage:
+      enabled: true
+      value: 1
+      radius: 3
+
+  lanternrise:
+    category: common
+    price: 700
+    perks:
+      lantern-count: 8
+      rise-ticks: 35
+      fall-damage: 2.5
+      glow-radius: 3
+      duration-ticks: 150
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  vinegrasp:
+    category: non-common
+    price: 1300
+    perks:
+      vine-count: 7
+      hold-ticks: 45
+      pull-strength: 0.25
+      damage: 2
+      duration-ticks: 160
+    damage:
+      enabled: true
+      value: 2
+      radius: 5
+
+  echobat:
+    category: non-common
+    price: 1400
+    perks:
+      bat-count: 10
+      screech-radius: 6
+      darkness-ticks: 40
+      seek-range: 14
+      duration-ticks: 170
+    damage:
+      enabled: true
+      value: 2
+      radius: 4
+
+  paintbomb:
+    category: non-common
+    price: 1250
+    perks:
+      blast-radius: 5
+      blind-ticks: 35
+      shard-count: 20
+      duration-ticks: 120
+    damage:
+      enabled: true
+      value: 3
+      radius: 5
+
+  chainsaw:
+    category: rare
+    price: 2400
+    perks:
+      length: 4
+      spin-speed: 0.45
+      move-speed: 0.28
+      tick-damage: 1.5
+    damage:
+      enabled: true
+      value: 2
+      radius: 2
+
+  meteorshower:
+    category: rare
+    price: 2600
+    perks:
+      meteor-count: 7
+      spread: 8
+      impact-damage: 4
+      crater-vfx: true
+    damage:
+      enabled: true
+      value: 4
+      radius: 3
+
+  icerink:
+    category: rare
+    price: 2300
+    perks:
+      radius: 6
+      duration-ticks: 90
+      slip-strength: 0.35
+      burst-damage: 3
+    damage:
+      enabled: true
+      value: 3
+      radius: 6
+
+  hookshot:
+    category: rare
+    price: 2100
+    perks:
+      range: 16
+      pull-speed: 0.55
+      damage: 3
+      stun-ticks: 20
+    damage:
+      enabled: true
+      value: 3
+      radius: 2
+
+  solarflare:
+    category: very-rare
+    price: 4800
+    perks:
+      charge-ticks: 25
+      ring-speed: 0.35
+      burn-seconds: 3
+      blind-ticks: 25
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
+
+  quillstorm:
+    category: very-rare
+    price: 4600
+    perks:
+      quill-count: 24
+      speed: 0.7
+      stick-ticks: 30
+      damage: 2
+    damage:
+      enabled: true
+      value: 2
+      radius: 3
+
+  bloodmoon:
+    category: very-rare
+    price: 5200
+    perks:
+      ray-count: 6
+      interval-ticks: 18
+      ray-damage: 4
+      duration: 160
+    damage:
+      enabled: true
+      value: 4
+      radius: 3
+
+  serpentcoil:
+    category: epic
+    price: 8800
+    perks:
+      segments: 14
+      coil-ticks: 60
+      crush-damage: 5
+      seek-range: 14
+    damage:
+      enabled: true
+      value: 5
+      radius: 4
+
+  forgeanvil:
+    category: epic
+    price: 8200
+    perks:
+      shadow-ticks: 30
+      slam-damage: 7
+      wave-radius: 7
+      spark-count: 20
+    damage:
+      enabled: true
+      value: 7
+      radius: 7
+
+  prismbeam:
+    category: epic
+    price: 9000
+    perks:
+      charge-ticks: 28
+      beam-count: 3
+      track-lead: 0.35
+      damage: 5
+    damage:
+      enabled: true
+      value: 5
+      radius: 3
+
+  hauntedchoir:
+    category: epic
+    price: 8600
+    perks:
+      singer-count: 6
+      pulse-interval: 12
+      damage: 3
+      fear-radius: 8
+    damage:
+      enabled: true
+      value: 3
+      radius: 8
+
+  origami:
+    category: legendary
+    price: 14000
+    perks:
+      sheet-count: 16
+      fold-ticks: 30
+      blade-damage: 3
+      waves: 3
+    damage:
+      enabled: true
+      value: 3
+      radius: 4
+
+  abyssgate:
+    category: legendary
+    price: 16000
+    perks:
+      gate-height: 6
+      tentacle-count: 8
+      pull: 0.2
+      duration: 180
+    damage:
+      enabled: true
+      value: 4
+      radius: 6
+
+  crownofash:
+    category: legendary
+    price: 15500
+    perks:
+      ember-count: 14
+      orbit-then-seek: true
+      burn-seconds: 4
+      level-on-hit: true
+    damage:
+      enabled: true
+      value: 4
+      radius: 5
+
+  chronosphere:
+    category: ultra
+    price: 52000
+    perks:
+      freeze-radius: 9
+      freeze-ticks: 50
+      slash-count: 8
+      shatter-damage: 8
+    damage:
+      enabled: true
+      value: 8
+      radius: 9
+
+  realityglitch:
+    category: ultra
+    price: 56000
+    perks:
+      glitch-count: 20
+      jitter-amp: 0.6
+      crash-ticks: 12
+      crash-damage: 9
+      sample-radius: 5
+      duration-ticks: 70
+    damage:
+      enabled: true
+      value: 9
+      radius: 8
+
+  judgment:
+    category: ultra
+    price: 62000
+    perks:
+      weigh-ticks: 50
+      max-targets: 4
+      crush-damage: 10
+      knockback: 1.8
+    damage:
+      enabled: true
+      value: 10
+      radius: 5
+
+  cosmicfinale:
+    category: ultra
+    price: 75000
+    perks:
+      stars: 12
+      phase-count: 3
+      beam-damage: 6
+      finale-nova: true
+      duration-ticks: 280
+    damage:
+      enabled: true
+      value: 7
+      radius: 10

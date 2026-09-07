@@ -1,0 +1,345 @@
+title: "&0KTPlus Effects"
+
+rows: 6
+
+structure:
+  - "#########"
+  - "#EEEEEEEU"
+  - "#EEEEEEE#"
+  - "#EEEEEEE#"
+  - "#EEEEEEED"
+  - "F#C#Q#B#"
+
+ingredients:
+  "#":
+    type: border
+    material: BLACK_STAINED_GLASS_PANE
+    name: "&0 "
+  "E":
+    type: effect
+  "U":
+    type: button
+    button: scroll-up
+  "D":
+    type: button
+    button: scroll-down
+  "F":
+    type: button
+    button: filter
+  "C":
+    type: button
+    button: close
+  "Q":
+    type: button
+    button: clear
+  "B":
+    type: button
+    button: balance
+
+category-slots:
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+
+categories:
+  common:
+    display-name: "&fCommon"
+    tab-icon: IRON_INGOT
+  non-common:
+    display-name: "&9Non-Common"
+    tab-icon: LAPIS_LAZULI
+  rare:
+    display-name: "&6Rare"
+    tab-icon: GOLD_INGOT
+  very-rare:
+    display-name: "&aVery Rare"
+    tab-icon: EMERALD
+  epic:
+    display-name: "&5Epic"
+    tab-icon: AMETHYST_SHARD
+  legendary:
+    display-name: "&bLegendary"
+    tab-icon: DIAMOND
+  ultra:
+    display-name: "&4Ultra"
+    tab-icon: NETHERITE_INGOT
+
+buttons:
+  scroll-up:
+    material: ARROW
+    name: "&eScroll Up"
+    name-disabled: "&8Scroll Up"
+  scroll-down:
+    material: ARROW
+    name: "&eScroll Down"
+    name-disabled: "&8Scroll Down"
+  filter:
+    material: HOPPER
+    name: "&6Filter &8| {mode}"
+    lore:
+      - "&7Sort for &fthis category &7only"
+      - "&eLeft-click &7next option"
+      - "&eRight-click &7previous option"
+      - "&8"
+      - "{modes}"
+  close:
+    material: OAK_DOOR
+    name: "&cClose"
+  clear:
+    material: FIRE_CHARGE
+    name: "&cClear Effect"
+  balance:
+    material: GOLD_NUGGET
+    name: "&6Coins: &f{balance}"
+
+texts:
+  empty-effect:
+    material: WHITE_STAINED_GLASS_PANE
+    name: "&f "
+  filter-mode-active: "&a▶ {label}"
+  filter-mode-inactive: "&8  {label}"
+  filter-modes:
+    NONE: "None"
+    NAME_ASC: "Name A → Z"
+    NAME_DESC: "Name Z → A"
+    PRICE_ASC: "Price ↑"
+    PRICE_DESC: "Price ↓"
+    FREE_FIRST: "Free first"
+    UNLOCKED_FIRST: "Unlocked first"
+    LOCKED_FIRST: "Locked first"
+    AFFORDABLE_FIRST: "Affordable first"
+    SELECTED_FIRST: "Selected first"
+    HEAVY_FIRST: "Heavy first"
+    ID_ASC: "ID A → Z"
+  effect-item:
+    name: "&b{name}"
+    lore:
+      - "{category}"
+      - "{status}"
+      - "{price}"
+      - "{lock}"
+    status-selected: "&aSelected"
+    status-click: "&7Click to select"
+    price-free: "&7Price: &aFree"
+    price-paid: "&7Price: &f{price} coins"
+    lock-unlocked: "&aUnlocked"
+    lock-locked: "&cLocked"
+
+effects:
+  cloud:
+    name: "Cloud"
+    material: CLOUD
+  smoke:
+    name: "Smoke"
+    material: CAMPFIRE
+  hearts:
+    name: "Hearts"
+    material: POPPY
+  notes:
+    name: "Notes"
+    material: NOTE_BLOCK
+  earthquake:
+    name: "Earthquake"
+    material: DIRT
+  tornado:
+    name: "Tornado"
+    material: WHITE_WOOL
+  end:
+    name: "End"
+    material: ENDER_PEARL
+  headcollector:
+    name: "Head Collector"
+    material: PLAYER_HEAD
+  totem:
+    name: "Totem"
+    material: TOTEM_OF_UNDYING
+  lightning:
+    name: "Lightning"
+    material: LIGHTNING_ROD
+  grave:
+    name: "Grave"
+    material: DEEPSLATE
+  explosion:
+    name: "Explosion"
+    material: TNT
+  mace:
+    name: "Mace"
+    material: MACE
+  skeleton:
+    name: "Skeleton"
+    material: SKELETON_SKULL
+  sniper:
+    name: "Sniper"
+    material: BOW
+  glowmissile:
+    name: "Glow Missile"
+    material: GLOWSTONE_DUST
+  shockwave:
+    name: "Shockwave"
+    material: ECHO_SHARD
+  enchantcolumn:
+    name: "Enchant Column"
+    material: ENCHANTING_TABLE
+  fireworks:
+    name: "Fireworks"
+    material: FIREWORK_ROCKET
+  aurafarming:
+    name: "Aura Farming"
+    material: WHEAT
+  dimensionalrift:
+    name: "Dimensional Rift"
+    material: ENDER_EYE
+  firephoenix:
+    name: "Fire Phoenix"
+    material: BLAZE_POWDER
+  prismaticnova:
+    name: "Prismatic Nova"
+    material: AMETHYST_SHARD
+  stellarcollapse:
+    name: "Stellar Collapse"
+    material: NETHER_STAR
+  voidlotus:
+    name: "Void Lotus"
+    material: CHORUS_FLOWER
+  wither:
+    name: "Wither"
+    material: WITHER_SKELETON_SKULL
+  warden:
+    name: "Warden"
+    material: SCULK_SHRIEKER
+  magnet:
+    name: "Magnet"
+    material: IRON_BLOCK
+  bubbletrap:
+    name: "Bubble Trap"
+    material: HEART_OF_THE_SEA
+  inksquid:
+    name: "Ink Squid"
+    material: INK_SAC
+  beeswarm:
+    name: "Bee Swarm"
+    material: HONEYCOMB
+  sandstorm:
+    name: "Sandstorm"
+    material: SAND
+  lightningrod:
+    name: "Lightning Rod"
+    material: BLAZE_ROD
+  boomerang:
+    name: "Boomerang"
+    material: WOODEN_SWORD
+  mirrorclone:
+    name: "Mirror Clone"
+    material: ARMOR_STAND
+  geyser:
+    name: "Geyser"
+    material: WATER_BUCKET
+  cactusbarrage:
+    name: "Cactus Barrage"
+    material: CACTUS
+  blackhole:
+    name: "Black Hole"
+    material: BLACK_CONCRETE
+  clockrewind:
+    name: "Clock Rewind"
+    material: CLOCK
+  railgun:
+    name: "Railgun"
+    material: LIGHTNING_ROD
+  puppetstrings:
+    name: "Puppet Strings"
+    material: STRING
+  alchemy:
+    name: "Alchemy"
+    material: CAULDRON
+  crystalspire:
+    name: "Crystal Spire"
+    material: AMETHYST_CLUSTER
+  dragonnest:
+    name: "Dragon Nest"
+    material: DRAGON_EGG
+  gravitywell:
+    name: "Gravity Well"
+    material: ENDER_PEARL
+  arcade:
+    name: "Arcade"
+    material: JUKEBOX
+  kaiju:
+    name: "Kaiju"
+    material: DIRT
+  sparkler:
+    name: "Sparkler"
+    material: BLAZE_POWDER
+  snowballstorm:
+    name: "Snowball Storm"
+    material: SNOWBALL
+  lanternrise:
+    name: "Lantern Rise"
+    material: LANTERN
+  vinegrasp:
+    name: "Vine Grasp"
+    material: VINE
+  echobat:
+    name: "Echo Bat"
+    material: ECHO_SHARD
+  paintbomb:
+    name: "Paint Bomb"
+    material: PINK_CONCRETE_POWDER
+  chainsaw:
+    name: "Chainsaw"
+    material: IRON_SWORD
+  meteorshower:
+    name: "Meteor Shower"
+    material: MAGMA_BLOCK
+  icerink:
+    name: "Ice Rink"
+    material: PACKED_ICE
+  hookshot:
+    name: "Hookshot"
+    material: FISHING_ROD
+  solarflare:
+    name: "Solar Flare"
+    material: GLOWSTONE
+  quillstorm:
+    name: "Quill Storm"
+    material: ARROW
+  bloodmoon:
+    name: "Blood Moon"
+    material: REDSTONE_BLOCK
+  serpentcoil:
+    name: "Serpent Coil"
+    material: GREEN_CONCRETE
+  forgeanvil:
+    name: "Forge Anvil"
+    material: ANVIL
+  prismbeam:
+    name: "Prism Beam"
+    material: AMETHYST_SHARD
+  hauntedchoir:
+    name: "Haunted Choir"
+    material: SKELETON_SKULL
+  origami:
+    name: "Origami"
+    material: PAPER
+  abyssgate:
+    name: "Abyss Gate"
+    material: OBSIDIAN
+  crownofash:
+    name: "Crown of Ash"
+    material: BLAZE_POWDER
+  chronosphere:
+    name: "Chronosphere"
+    material: CLOCK
+  realityglitch:
+    name: "Reality Glitch"
+    material: STRUCTURE_BLOCK
+  judgment:
+    name: "Judgment"
+    material: GOLD_BLOCK
+  cosmicfinale:
+    name: "Cosmic Finale"
+    material: NETHER_STAR

@@ -1,0 +1,13 @@
+resource_pack:
+  settings:
+    enabled: true
+    url: "https://download.mc-packs.net/pack/e5a021627e0b6dbb206095c2422b9dab46751fd2.zip"
+    sha1: "e5a021627e0b6dbb206095c2422b9dab46751fd2"
+    uuid: "e46d4704-72db-4ed4-b952-188ca02f7f62"
+    required: true
+    prompt: "This resource pack is required to play."
+  sounds:
+    bow-hit:
+      name: "ktplus.hs1"
+    aura-farm:
+      name: "ktplus.aurab"
