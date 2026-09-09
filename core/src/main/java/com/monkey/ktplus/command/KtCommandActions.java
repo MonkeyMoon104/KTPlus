@@ -201,6 +201,53 @@ public final class KtCommandActions {
         }
     }
 
+    public void importKt(CommandSender sender, String[] args) {
+        Objects.requireNonNull(sender, "sender");
+        Objects.requireNonNull(args, "args");
+        if (!sender.hasPermission("ktplus.migrate") && !sender.hasPermission("ktplus.admin")) {
+            sender.sendMessage(bootstrap.config().message("no-permission"));
+            return;
+        }
+        try {
+            java.nio.file.Path ktFolder = bootstrap.plugin().getDataFolder().toPath().getParent().resolve("KT");
+            com.monkey.ktplus.storage.importkt.ClassicKtImportRequest request =
+                    com.monkey.ktplus.storage.importkt.ClassicKtImportRequest.parse(ktFolder, args);
+            boolean vaultEconomy = com.monkey.ktplus.economy.EconomyProviderType.fromConfig(
+                            bootstrap.config().economyProviderRaw())
+                    == com.monkey.ktplus.economy.EconomyProviderType.VAULT;
+            java.util.Set<String> knownIds = bootstrap.registry().all().stream()
+                    .map(effect -> effect.definition().id())
+                    .collect(Collectors.toSet());
+            com.monkey.ktplus.storage.importkt.ClassicKtImporter importer =
+                    new com.monkey.ktplus.storage.importkt.ClassicKtImporter(
+                            bootstrap.database(), knownIds, vaultEconomy);
+            sender.sendMessage(request.dryRun() ? "Starting classic KT import dry-run…" : "Starting classic KT import…");
+            com.monkey.ktplus.storage.importkt.ClassicKtImportResult outcome = importer.importData(request);
+            for (String line : outcome.operatorMessages()) {
+                sender.sendMessage(line);
+            }
+            if (!outcome.unknownEffectIds().isEmpty() && request.dryRun()) {
+                sender.sendMessage("Unknown effect ids (sample): "
+                        + String.join(
+                                ", ",
+                                outcome.unknownEffectIds().stream().limit(12).toList()));
+            }
+            if (outcome.success() && !request.dryRun()) {
+                bootstrap.clearPlayerDataCaches();
+            }
+            sender.sendMessage(
+                    outcome.success()
+                            ? "Import OK: " + outcome.message()
+                            : "Import FAILED: " + outcome.message());
+        } catch (IllegalArgumentException error) {
+            sender.sendMessage(
+                    "/kt import-kt [--dry-run] [--overwrite-balances] [confirmation-token]");
+            sender.sendMessage("Invalid args: " + error.getMessage());
+        } catch (Exception error) {
+            sender.sendMessage("Import failed: " + error.getMessage());
+        }
+    }
+
     public List<String> effectIds() {
         return bootstrap.registry().all().stream()
                 .map(effect -> effect.definition().id())

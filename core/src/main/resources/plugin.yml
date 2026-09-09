@@ -30,7 +30,7 @@ libraries:
 commands:
   ktplus:
     description: Open and manage kill effects.
-    usage: /<command> [reload|set|clear|test|killcoins|review|migrate]
+    usage: /<command> [reload|set|clear|test|killcoins|review|migrate|import-kt]
     aliases:
       - kt
       - killeffect

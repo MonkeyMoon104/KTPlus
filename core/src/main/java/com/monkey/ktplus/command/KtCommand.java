@@ -79,8 +79,11 @@ public final class KtCommand implements CommandExecutor, TabCompleter {
             case "migrate":
                 actions.migrate(sender, Arrays.copyOfRange(args, 1, args.length));
                 break;
+            case "import-kt":
+                actions.importKt(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
             default:
-                sender.sendMessage("/" + label + " [reload|set|clear|test|killcoins|review|migrate]");
+                sender.sendMessage("/" + label + " [reload|set|clear|test|killcoins|review|migrate|import-kt]");
                 break;
         }
         return true;
@@ -90,7 +93,9 @@ public final class KtCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
             return actions.filter(
-                    Arrays.asList("reload", "set", "clear", "test", "killcoins", "review", "migrate"), args[0]);
+                    Arrays.asList(
+                            "reload", "set", "clear", "test", "killcoins", "review", "migrate", "import-kt"),
+                    args[0]);
         }
         if (args.length == 2 && ("set".equalsIgnoreCase(args[0]) || "test".equalsIgnoreCase(args[0]))) {
             return actions.filter(actions.effectIds(), args[1]);
@@ -112,6 +117,10 @@ public final class KtCommand implements CommandExecutor, TabCompleter {
                             "--force-pending-inventory",
                             "--allow-nonempty-target"),
                     args[args.length - 1]);
+        }
+        if (args.length >= 2 && "import-kt".equalsIgnoreCase(args[0])) {
+            return actions.filter(
+                    Arrays.asList("--dry-run", "--overwrite-balances"), args[args.length - 1]);
         }
         return new ArrayList<String>();
     }

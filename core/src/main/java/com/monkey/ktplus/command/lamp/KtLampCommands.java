@@ -187,6 +187,33 @@ public final class KtLampCommands {
         actions.migrate(actor.sender(), migrateArgs(target, a, b, c, d, e));
     }
 
+    @Command("ktplus import-kt")
+    public void importKtPlus(
+            BukkitCommandActor actor,
+            @Suggest({"--dry-run", "--overwrite-balances"}) @Optional String a,
+            @Optional String b,
+            @Optional String c) {
+        actions.importKt(actor.sender(), importKtArgs(a, b, c));
+    }
+
+    @Command("kt import-kt")
+    public void importKt(
+            BukkitCommandActor actor,
+            @Suggest({"--dry-run", "--overwrite-balances"}) @Optional String a,
+            @Optional String b,
+            @Optional String c) {
+        actions.importKt(actor.sender(), importKtArgs(a, b, c));
+    }
+
+    @Command("killeffect import-kt")
+    public void importKillEffect(
+            BukkitCommandActor actor,
+            @Suggest({"--dry-run", "--overwrite-balances"}) @Optional String a,
+            @Optional String b,
+            @Optional String c) {
+        actions.importKt(actor.sender(), importKtArgs(a, b, c));
+    }
+
     private static String[] migrateArgs(
             String target, String a, String b, String c, String d, String e) {
         java.util.ArrayList<String> args = new java.util.ArrayList<String>();
@@ -205,6 +232,20 @@ public final class KtLampCommands {
         }
         if (e != null) {
             args.add(e);
+        }
+        return args.toArray(new String[0]);
+    }
+
+    private static String[] importKtArgs(String a, String b, String c) {
+        java.util.ArrayList<String> args = new java.util.ArrayList<String>();
+        if (a != null) {
+            args.add(a);
+        }
+        if (b != null) {
+            args.add(b);
+        }
+        if (c != null) {
+            args.add(c);
         }
         return args.toArray(new String[0]);
     }
