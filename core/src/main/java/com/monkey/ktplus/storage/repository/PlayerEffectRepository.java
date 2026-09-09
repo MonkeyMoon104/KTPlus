@@ -43,6 +43,10 @@ public final class PlayerEffectRepository {
         cache.put(uuid, Optional.empty());
     }
 
+    public void clearCache() {
+        cache.clear();
+    }
+
     private Optional<String> loadSelected(UUID uuid) {
         return database.queryOne(
                 "SELECT effect_id FROM kt_player_effects WHERE uuid = ?",

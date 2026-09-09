@@ -405,6 +405,15 @@ public final class PluginBootstrap {
         return database;
     }
 
+    public void clearPlayerDataCaches() {
+        if (killCoins != null) {
+            killCoins.clearCaches();
+        }
+        if (users != null) {
+            users.clearCache();
+        }
+    }
+
     public ConfigManager configManager() {
         return configManager;
     }

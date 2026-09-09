@@ -46,6 +46,10 @@ public final class UserService implements UserSelectionWriter {
         notifySelectionChanged(uuid, null);
     }
 
+    public void clearCache() {
+        repository.clearCache();
+    }
+
     private void notifySelectionChanged(UUID uuid, @Nullable String effectId) {
         BiConsumer<UUID, @Nullable String> listener = selectionListener;
         if (listener != null) {

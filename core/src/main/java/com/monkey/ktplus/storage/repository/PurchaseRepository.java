@@ -126,6 +126,10 @@ public final class PurchaseRepository {
         purchaseCache.invalidate(purchaseKey(uuid, effectId));
     }
 
+    public void clearCache() {
+        purchaseCache.clear();
+    }
+
     private boolean loadPurchase(UUID uuid, String effectId) {
         return database.queryOne(
                         "SELECT effect_id FROM kt_purchases WHERE uuid = ? AND effect_id = ?",

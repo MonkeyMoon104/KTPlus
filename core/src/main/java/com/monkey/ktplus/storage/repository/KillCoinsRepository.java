@@ -23,6 +23,11 @@ public final class KillCoinsRepository {
         balanceCache.clear();
     }
 
+    public void clearCaches() {
+        balanceCache.clear();
+        purchases.clearCache();
+    }
+
     public long balance(UUID uuid) {
         return balanceCache.computeIfAbsent(uuid, this::loadBalance);
     }
