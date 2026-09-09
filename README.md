@@ -127,6 +127,7 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 1. Put `KTPlus-4.0.0.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
 2. Start once. Configs appear under `plugins/KTPlus/`.
 3. Edit what you need → `/kt reload` or restart.
+4. Upgrading from classic **KT**? Keep `plugins/KT/` (the SQLite files), run **only** KTPlus, then use [`/kt import-kt`](#commands).
 
 > On first load, Paper downloads libraries declared in `plugin.yml`. PacketEvents is prepared by KTPlus’ own runtime loader.
 
@@ -155,6 +156,7 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 | `/kt killcoins add\|take\|set\|reset <player> <amount>` | Edit balance | `ktplus.killcoins.admin` |
 | `/kt review <github\|spigotmc> <account>` | Claim review reward | (players) |
 | `/kt migrate <sqlite\|mysql> [flags] <token>` | Migrate database | `ktplus.migrate` |
+| `/kt import-kt [--dry-run] [--overwrite-balances] [token]` | Import classic KT data | `ktplus.migrate` |
 
 <details>
 <summary><strong>Migration flags</strong> (SQLite ↔ MySQL only)</summary>
@@ -167,6 +169,44 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 
 </details>
 
+<details>
+<summary><strong>Import from classic KT</strong> (`plugins/KT/` → KTPlus)</summary>
+
+```text
+/kt import-kt [--dry-run] [--overwrite-balances] [confirmation-token]
+```
+
+**What you need**
+- **KTPlus running** (this plugin).
+- The old data folder `plugins/KT/` with `kt.db` and/or `killcoins.db`.
+- You do **not** need the classic KT jar loaded. Keep the folder; remove/disable the old plugin jar.
+
+**What is imported**
+- KillCoins balances → `kt_killcoins`
+- Purchased effects → `kt_purchases`
+- Selected effect → `kt_player_effects`
+
+**Defaults (safe)**
+- Existing balances are **not** overwritten (use `--overwrite-balances` only if you want classic balances to replace KTPlus ones).
+- Existing purchases / selections are skipped.
+- Unknown effect ids (renamed/removed in KTPlus) are skipped and listed in chat.
+- If `economy.provider` is `VAULT`, KillCoins rows are still written to the DB but **not used in-game**.
+
+**Steps**
+1. Backup `plugins/KT/` and your KTPlus database.
+2. Install/run only KTPlus; leave `plugins/KT/` on disk.
+3. Dry-run: `/kt import-kt --dry-run` — check counts, unknown effects, and the confirmation token (normalized path of `plugins/KT`).
+4. Apply: `/kt import-kt <token>` (add `--overwrite-balances` only if needed).
+5. Verify balances / GUI, then archive or remove `plugins/KT/` when you are done.
+
+**If something goes wrong**
+- Restore your backups and retry the dry-run.
+- Confirm `plugins/KT/kt.db` (and `killcoins.db` if you had it) exist and are readable.
+- Classic KT **MySQL** is not supported by this command — export to SQLite first, or copy rows manually into KTPlus tables.
+- Effect ids that no longer exist in KTPlus cannot be remapped automatically; unlock/select them again in KTPlus if needed.
+
+</details>
+
 ---
 
 ## Permissions
@@ -176,7 +216,7 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 | `ktplus.admin` | op | Admin access |
 | `ktplus.admin.bypass` | op | Bypass restrictions |
 | `ktplus.reload` | op | Reload |
-| `ktplus.migrate` | op | DB migration |
+| `ktplus.migrate` | op | DB migration / classic KT import |
 | `ktplus.set` | true | Select own effect |
 | `ktplus.set.others` | op | Select for others |
 | `ktplus.clear` | true | Clear own effect |
@@ -398,6 +438,7 @@ KTPlus/
 | Vault balance stuck | Still on KillCoins | `economy.provider: VAULT` + Vault + economy plugin |
 | Review already claimed | Player or account already used | Expected — one claim each |
 | Migration rejected | Wrong target or MySQL &lt; 8 | sqlite/mysql only; upgrade MySQL |
+| Classic KT data missing after upgrade | Old `plugins/KT/` not imported | `/kt import-kt --dry-run`, then with token |
 
 Reproduce on a test server before raising production log noise.
 
