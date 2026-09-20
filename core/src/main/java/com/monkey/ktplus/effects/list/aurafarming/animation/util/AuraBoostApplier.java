@@ -12,6 +12,9 @@ public final class AuraBoostApplier {
     private AuraBoostApplier() {}
 
     public static void apply(EffectContext context, Player killer) {
+        if (context.config().cosmeticMode()) {
+            return;
+        }
         ConfigurationSection section = context.config().effectSection("aurafarming");
         ConfigurationSection boost = resolveBoostSection(section);
         if (boost != null) {

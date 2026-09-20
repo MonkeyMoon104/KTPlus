@@ -143,6 +143,10 @@ public final class ConfigSnapshot {
         return false;
     }
 
+    public boolean cosmeticMode() {
+        return main.getBoolean("cosmetic-mode", false);
+    }
+
     public int maxSessionsPerPlayer() {
         return Math.max(1, performance.getInt("max-active-sessions-per-player", 2));
     }
@@ -314,6 +318,9 @@ public final class ConfigSnapshot {
     }
 
     public boolean effectStructure(String id, boolean fallback) {
+        if (cosmeticMode()) {
+            return false;
+        }
         ConfigurationSection section = effectSection(id);
         if (section == null) {
             return fallback;
@@ -322,6 +329,9 @@ public final class ConfigSnapshot {
     }
 
     public EffectDamageConfig effectDamage(String id) {
+        if (cosmeticMode()) {
+            return EffectDamageConfig.disabled();
+        }
         ConfigurationSection section = effects.getConfigurationSection("effects." + id + ".damage");
         if (section == null) {
             return EffectDamageConfig.disabled();

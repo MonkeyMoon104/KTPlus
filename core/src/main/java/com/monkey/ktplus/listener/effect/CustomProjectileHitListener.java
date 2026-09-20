@@ -6,6 +6,7 @@ import com.monkey.ktplus.effects.support.entity.OwnerDamageRedirect;
 import com.monkey.ktplus.hook.HookManager;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -23,11 +24,17 @@ public final class CustomProjectileHitListener implements Listener {
     private final JavaPlugin plugin;
     private final HookManager hooks;
     private final EffectEntityRegistry entities;
+    private final BooleanSupplier cosmeticMode;
 
-    public CustomProjectileHitListener(JavaPlugin plugin, HookManager hooks, EffectEntityRegistry entities) {
+    public CustomProjectileHitListener(
+            JavaPlugin plugin,
+            HookManager hooks,
+            EffectEntityRegistry entities,
+            BooleanSupplier cosmeticMode) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.hooks = Objects.requireNonNull(hooks, "hooks");
         this.entities = Objects.requireNonNull(entities, "entities");
+        this.cosmeticMode = Objects.requireNonNull(cosmeticMode, "cosmeticMode");
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -46,6 +53,11 @@ public final class CustomProjectileHitListener implements Listener {
             return;
         }
         if (OwnerDamageRedirect.isRedirecting(victim.getUniqueId())) {
+            return;
+        }
+        if (cosmeticMode.getAsBoolean()) {
+            event.setCancelled(true);
+            cleanupProjectile(damager, policy);
             return;
         }
         Player owner = Bukkit.getPlayer(policy.ownerId());
@@ -79,6 +91,10 @@ public final class CustomProjectileHitListener implements Listener {
         }
         UUID ownerId = entities.fireCreditOwner(victim.getUniqueId());
         if (ownerId == null) {
+            return;
+        }
+        if (cosmeticMode.getAsBoolean()) {
+            event.setCancelled(true);
             return;
         }
         Player owner = Bukkit.getPlayer(ownerId);

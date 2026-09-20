@@ -24,10 +24,23 @@ public final class OwnerDamageRedirect {
             @Nullable Player owner,
             double damage,
             Runnable cancelAndSchedule) {
+        redirect(plugin, victim, owner, damage, false, cancelAndSchedule);
+    }
+
+    public static void redirect(
+            JavaPlugin plugin,
+            LivingEntity victim,
+            @Nullable Player owner,
+            double damage,
+            boolean cosmeticMode,
+            Runnable cancelAndSchedule) {
         Objects.requireNonNull(plugin, "plugin");
         Objects.requireNonNull(victim, "victim");
         Objects.requireNonNull(cancelAndSchedule, "cancelAndSchedule");
-        if (owner == null || !owner.isOnline() || damage <= 0.0D) {
+        if (cosmeticMode || owner == null || !owner.isOnline() || damage <= 0.0D) {
+            if (cosmeticMode) {
+                cancelAndSchedule.run();
+            }
             return;
         }
         if (APPLYING.contains(victim.getUniqueId())) {

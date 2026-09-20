@@ -27,7 +27,7 @@ public final class FireworksLauncher {
 
         Player killer = context.killer();
         ConfigurationSection effectSection = context.config().effectSection("fireworks");
-        FireworksSettings settings = FireworksSettings.from(effectSection);
+        FireworksSettings settings = FireworksSettings.from(effectSection, context.config().cosmeticMode());
         boolean allowStructure = context.config().effectStructure("fireworks", true);
         Location groundCenter = FireworksGround.resolveGroundCenter(target);
         FireworksMarkedTracker tracker =

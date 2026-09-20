@@ -124,6 +124,9 @@ public final class ShockwaveAnimation {
                     if (killer != null && player.getUniqueId().equals(killer.getUniqueId())) {
                         continue;
                     }
+                    if (!session.allowsGameplayMutation(killer, player.getLocation())) {
+                        continue;
+                    }
                     if (player.getLocation().distance(center) <= radius[0]) {
                         player.addPotionEffect(new PotionEffect(finalEffectType, duration * 20, amplifier - 1));
                     }
@@ -132,6 +135,9 @@ public final class ShockwaveAnimation {
             if (damageConfig.enabled() && center.getWorld() != null) {
                 for (Player player : center.getWorld().getPlayers()) {
                     if (killer != null && player.getUniqueId().equals(killer.getUniqueId())) {
+                        continue;
+                    }
+                    if (!session.allowsGameplayMutation(killer, player.getLocation())) {
                         continue;
                     }
                     if (player.getLocation().distance(center) <= damageConfig.radius()) {

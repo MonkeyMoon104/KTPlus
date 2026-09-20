@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BooleanSupplier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.LivingEntity;
@@ -21,12 +22,18 @@ public final class EndEndermanKillListener implements Listener {
     private final JavaPlugin plugin;
     private final HookManager hooks;
     private final EffectEntityRegistry entities;
+    private final BooleanSupplier cosmeticMode;
     private final Set<UUID> applyingOwnerDamage = ConcurrentHashMap.newKeySet();
 
-    public EndEndermanKillListener(JavaPlugin plugin, HookManager hooks, EffectEntityRegistry entities) {
+    public EndEndermanKillListener(
+            JavaPlugin plugin,
+            HookManager hooks,
+            EffectEntityRegistry entities,
+            BooleanSupplier cosmeticMode) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.hooks = Objects.requireNonNull(hooks, "hooks");
         this.entities = Objects.requireNonNull(entities, "entities");
+        this.cosmeticMode = Objects.requireNonNull(cosmeticMode, "cosmeticMode");
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -42,6 +49,10 @@ public final class EndEndermanKillListener implements Listener {
             return;
         }
         if (applyingOwnerDamage.contains(victim.getUniqueId())) {
+            return;
+        }
+        if (cosmeticMode.getAsBoolean()) {
+            event.setCancelled(true);
             return;
         }
         Player owner = Bukkit.getPlayer(ownerId);

@@ -61,11 +61,17 @@ public final class PluginListenerRegistrar {
         manager.registerEvents(new EffectSkeletonGuardListener(), plugin);
         manager.registerEvents(new EffectSniperArrowListener(), plugin);
         manager.registerEvents(
-                new CustomProjectileHitListener(plugin, hooks, runtime.entityRegistry()), plugin);
+                new CustomProjectileHitListener(
+                        plugin, hooks, runtime.entityRegistry(), () -> bootstrap.config().cosmeticMode()),
+                plugin);
         manager.registerEvents(
-                new EffectFireworkDamageListener(plugin, hooks, runtime.entityRegistry()), plugin);
+                new EffectFireworkDamageListener(
+                        plugin, hooks, runtime.entityRegistry(), () -> bootstrap.config().cosmeticMode()),
+                plugin);
         manager.registerEvents(
-                new EndEndermanKillListener(plugin, hooks, runtime.entityRegistry()), plugin);
+                new EndEndermanKillListener(
+                        plugin, hooks, runtime.entityRegistry(), () -> bootstrap.config().cosmeticMode()),
+                plugin);
         manager.registerEvents(new EnchantDebrisListener(), plugin);
         if (headCollector != null) {
             manager.registerEvents(new HeadCollectorListener(headCollector, users), plugin);

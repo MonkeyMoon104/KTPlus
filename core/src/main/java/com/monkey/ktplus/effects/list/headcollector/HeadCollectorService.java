@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BooleanSupplier;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -35,17 +36,20 @@ public final class HeadCollectorService {
     private final UserService users;
     private final HookManager hooks;
     private final VisualEffectService visuals;
+    private final BooleanSupplier cosmeticMode;
     private final Map<UUID, CollectorState> states = new ConcurrentHashMap<>();
 
     public HeadCollectorService(
             PlatformScheduler scheduler,
             UserService users,
             HookManager hooks,
-            VisualEffectService visuals) {
+            VisualEffectService visuals,
+            BooleanSupplier cosmeticMode) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler");
         this.users = Objects.requireNonNull(users, "users");
         this.hooks = Objects.requireNonNull(hooks, "hooks");
         this.visuals = Objects.requireNonNull(visuals, "visuals");
+        this.cosmeticMode = Objects.requireNonNull(cosmeticMode, "cosmeticMode");
     }
 
     public void adoptHead(Player killer, ItemDisplay display, HeadCollectorSettings settings) {
@@ -328,6 +332,7 @@ public final class HeadCollectorService {
         if (target.isValid()
                 && !target.isDead()
                 && state.activeLaunchDamage > 0.0D
+                && !cosmeticMode.getAsBoolean()
                 && hooks.worldGuard().allowsProtectedAction(killer, target.getLocation())) {
             target.damage(state.activeLaunchDamage, killer);
         }

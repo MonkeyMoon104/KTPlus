@@ -19,6 +19,9 @@ public final class BuiltInDamageService {
         if (!damage.enabled()) {
             return;
         }
+        if (!session.allowsGameplayMutation(killer, center)) {
+            return;
+        }
         Runnable action = () -> deal(session, killer, center, damage);
         if (damage.delayTicks() <= 0L) {
             action.run();

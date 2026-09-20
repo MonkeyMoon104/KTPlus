@@ -57,6 +57,26 @@ public final class FireworksSettings {
     }
 
     public static FireworksSettings from(@Nullable ConfigurationSection effectSection) {
+        return from(effectSection, false);
+    }
+
+    public static FireworksSettings from(@Nullable ConfigurationSection effectSection, boolean cosmeticMode) {
+        FireworksSettings base = fromSection(effectSection);
+        if (!cosmeticMode) {
+            return base;
+        }
+        return new FireworksSettings(
+                base.radarRange(),
+                base.radarSpeed(),
+                base.radarPeriodTicks(),
+                base.fireworksPerPlayer(),
+                false,
+                0.0,
+                base.finaleIntervalTicks(),
+                base.footUpdateTicks());
+    }
+
+    private static FireworksSettings fromSection(@Nullable ConfigurationSection effectSection) {
         if (effectSection == null) {
             return defaults();
         }

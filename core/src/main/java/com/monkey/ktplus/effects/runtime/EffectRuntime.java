@@ -80,6 +80,7 @@ public final class EffectRuntime {
                 killer.getUniqueId(),
                 effect.definition().id(),
                 heavy,
+                config.cosmeticMode(),
                 location,
                 scheduler,
                 taskRegistry,

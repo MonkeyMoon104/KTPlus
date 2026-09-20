@@ -85,7 +85,7 @@ public final class CloudAnimation {
             spawnRain(visuals, centerCloud, 2.8 * form, current);
 
             if (linking) {
-                refreshLinkedPlayers(world, ground, killer, radius, linked);
+                refreshLinkedPlayers(world, ground, killer, radius, linked, session);
                 for (UUID id : linked) {
                     if (!previouslyLinked.contains(id)) {
                         Player joined = Bukkit.getPlayer(id);
@@ -129,7 +129,12 @@ public final class CloudAnimation {
     }
 
     private static void refreshLinkedPlayers(
-            World world, Location center, Player killer, double radius, List<UUID> linked) {
+            World world,
+            Location center,
+            Player killer,
+            double radius,
+            List<UUID> linked,
+            EffectSession session) {
         linked.clear();
         double radiusSq = radius * radius;
         for (Player player : world.getPlayers()) {
@@ -137,6 +142,9 @@ public final class CloudAnimation {
                 continue;
             }
             if (!player.isValid() || player.isDead()) {
+                continue;
+            }
+            if (killer != null && !session.allowsWorldMutation(killer, player.getLocation())) {
                 continue;
             }
             if (player.getLocation().distanceSquared(center) <= radiusSq) {

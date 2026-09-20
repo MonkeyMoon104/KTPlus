@@ -5,6 +5,7 @@ import com.monkey.ktplus.effects.support.entity.OwnerDamageRedirect;
 import com.monkey.ktplus.hook.HookManager;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
@@ -20,11 +21,17 @@ public final class EffectFireworkDamageListener implements Listener {
     private final JavaPlugin plugin;
     private final HookManager hooks;
     private final EffectEntityRegistry entities;
+    private final BooleanSupplier cosmeticMode;
 
-    public EffectFireworkDamageListener(JavaPlugin plugin, HookManager hooks, EffectEntityRegistry entities) {
+    public EffectFireworkDamageListener(
+            JavaPlugin plugin,
+            HookManager hooks,
+            EffectEntityRegistry entities,
+            BooleanSupplier cosmeticMode) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.hooks = Objects.requireNonNull(hooks, "hooks");
         this.entities = Objects.requireNonNull(entities, "entities");
+        this.cosmeticMode = Objects.requireNonNull(cosmeticMode, "cosmeticMode");
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -33,7 +40,7 @@ public final class EffectFireworkDamageListener implements Listener {
         Entity damager = event.getDamager();
         UUID ownedOwnerId = entities.ownedDamagerOwner(damager.getUniqueId());
         if (ownedOwnerId != null) {
-            if (event.getEntity().getUniqueId().equals(ownedOwnerId)) {
+            if (event.getEntity().getUniqueId().equals(ownedOwnerId) || cosmeticMode.getAsBoolean()) {
                 event.setCancelled(true);
             }
             return;
@@ -54,6 +61,10 @@ public final class EffectFireworkDamageListener implements Listener {
         }
         Player owner = Bukkit.getPlayer(ownerId);
         if (owner != null && victim.getUniqueId().equals(owner.getUniqueId())) {
+            event.setCancelled(true);
+            return;
+        }
+        if (cosmeticMode.getAsBoolean()) {
             event.setCancelled(true);
             return;
         }

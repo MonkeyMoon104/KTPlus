@@ -250,8 +250,10 @@ public final class BubbleTrapAnimation {
                 bubble.loc = trapped.getLocation().clone().add(0.0, 1.05, 0.0);
                 float growT = 1.0f - (bubble.lockLeft / (float) LOCK_TICKS);
                 bubble.displayScale = bubble.baseScale * (0.35f + 0.65f * clamp01(growT));
-                trapped.setVelocity(trapped.getVelocity().multiply(0.08));
-                teleportIntoBubble(trapped, bubble.loc);
+                if (session.allowsGameplayMutation(killer, trapped.getLocation())) {
+                    trapped.setVelocity(trapped.getVelocity().multiply(0.08));
+                    teleportIntoBubble(trapped, bubble.loc);
+                }
                 bubble.lockLeft--;
                 if (bubble.lockLeft <= 0) {
                     bubble.state = BubbleState.LIFT;
@@ -259,15 +261,17 @@ public final class BubbleTrapAnimation {
                 }
             } else {
                 bubble.loc.add(0.0, 0.12, 0.0);
-                teleportIntoBubble(trapped, bubble.loc);
-                Vector towardCenter = bubble.loc
-                        .toVector()
-                        .subtract(trapped.getLocation().toVector().add(new Vector(0.0, 1.05, 0.0)));
-                Vector vel = towardCenter.multiply(0.65);
-                if (vel.lengthSquared() > 0.81) {
-                    vel.normalize().multiply(0.9);
+                if (session.allowsGameplayMutation(killer, trapped.getLocation())) {
+                    teleportIntoBubble(trapped, bubble.loc);
+                    Vector towardCenter = bubble.loc
+                            .toVector()
+                            .subtract(trapped.getLocation().toVector().add(new Vector(0.0, 1.05, 0.0)));
+                    Vector vel = towardCenter.multiply(0.65);
+                    if (vel.lengthSquared() > 0.81) {
+                        vel.normalize().multiply(0.9);
+                    }
+                    trapped.setVelocity(vel);
                 }
-                trapped.setVelocity(vel);
                 bubble.trapLeft--;
                 if (bubble.trapLeft <= 0) {
                     popBubble(session, visuals, killer, victimId, bubble, popDamage, true);

@@ -144,6 +144,9 @@ public final class JudgmentAnimation {
                     if (p == null || !p.isOnline() || p.isDead()) {
                         continue;
                     }
+                    if (!session.allowsGameplayMutation(killer, p.getLocation())) {
+                        continue;
+                    }
                     p.setVelocity(new Vector(0, Math.min(0.05, p.getVelocity().getY()), 0));
                     visuals.dust(p.getLocation().add(0, 2.2, 0), GOLD, 1.3f, 3, 0.15, 0.1, 0.15, 0.0);
                 }

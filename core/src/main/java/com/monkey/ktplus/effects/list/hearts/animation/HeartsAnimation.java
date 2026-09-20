@@ -283,7 +283,7 @@ public final class HeartsAnimation {
         visuals.dust(at, TRAIL_RED, 1.25f, 4, 0.12, 0.12, 0.12, 0.0);
 
         if (heart.mode == HeartMode.HEAL) {
-            applyHeal(target, healPerHeart);
+            applyHeal(session, killer, target, healPerHeart);
             visuals.sound("ENTITY_PLAYER_LEVELUP", at, 0.45f, 1.55f + heart.index * 0.02f);
             visuals.sound("ENTITY_EXPERIENCE_ORB_PICKUP", at, 0.55f, 1.2f);
             return;
@@ -300,8 +300,11 @@ public final class HeartsAnimation {
         visuals.sound("ENTITY_EXPERIENCE_ORB_PICKUP", at, 0.35f, 0.55f);
     }
 
-    private static void applyHeal(Player player, double amount) {
+    private static void applyHeal(EffectSession session, Player actor, Player player, double amount) {
         if (amount <= 0.0 || player == null || !player.isOnline() || player.isDead()) {
+            return;
+        }
+        if (!session.allowsGameplayMutation(actor, player.getLocation())) {
             return;
         }
         AttributeInstance maxAttr = player.getAttribute(Attribute.MAX_HEALTH);

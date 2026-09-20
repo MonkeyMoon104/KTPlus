@@ -37,7 +37,7 @@ public final class FinalEffect {
             if (!(entity instanceof Player player)) {
                 continue;
             }
-            if (effectType != null) {
+            if (effectType != null && session.allowsGameplayMutation(killer, player.getLocation())) {
                 player.addPotionEffect(new PotionEffect(effectType, duration * 20, amplifier - 1));
             }
         }

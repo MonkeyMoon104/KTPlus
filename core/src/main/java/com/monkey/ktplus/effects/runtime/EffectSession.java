@@ -36,6 +36,7 @@ public final class EffectSession {
     private final UUID playerId;
     private final String effectId;
     private final boolean heavy;
+    private final boolean cosmeticMode;
     private final Location origin;
     private final PlatformScheduler scheduler;
     private final TaskRegistry taskRegistry;
@@ -54,6 +55,7 @@ public final class EffectSession {
             UUID playerId,
             String effectId,
             boolean heavy,
+            boolean cosmeticMode,
             Location origin,
             PlatformScheduler scheduler,
             TaskRegistry taskRegistry,
@@ -64,6 +66,7 @@ public final class EffectSession {
         this.playerId = Objects.requireNonNull(playerId, "playerId");
         this.effectId = Objects.requireNonNull(effectId, "effectId");
         this.heavy = heavy;
+        this.cosmeticMode = cosmeticMode;
         this.origin = Objects.requireNonNull(origin, "origin").clone();
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler");
         this.taskRegistry = Objects.requireNonNull(taskRegistry, "taskRegistry");
@@ -87,6 +90,10 @@ public final class EffectSession {
 
     public boolean heavy() {
         return heavy;
+    }
+
+    public boolean cosmeticMode() {
+        return cosmeticMode;
     }
 
     public Location origin() {
@@ -180,6 +187,9 @@ public final class EffectSession {
         if (type == null || location.getWorld() == null) {
             return null;
         }
+        if (cosmeticMode && !EffectGameplay.isVisualEntityType(type)) {
+            return null;
+        }
         if (!blockChangeGuard.allows(resolveActor(), location)) {
             return null;
         }
@@ -197,7 +207,15 @@ public final class EffectSession {
         return entity;
     }
 
+    public boolean allowsGameplayMutation(@Nullable Player actor, Location location) {
+        Objects.requireNonNull(location, "location");
+        return !cosmeticMode;
+    }
+
     public boolean allowsWorldMutation(@Nullable Player actor, Location location) {
+        if (!allowsGameplayMutation(actor, location)) {
+            return false;
+        }
         return blockChangeGuard.allows(actor != null ? actor : resolveActor(), location);
     }
 
@@ -262,6 +280,9 @@ public final class EffectSession {
             boolean applyPhysics) {
         Objects.requireNonNull(block, "block");
         Objects.requireNonNull(material, "material");
+        if (cosmeticMode) {
+            return;
+        }
         TemporaryBlockChange change = temporaryBlocks.change(block, material, applyPhysics);
         blockChanges.add(change);
         runLater(restoreDelayTicks, () -> {
@@ -279,6 +300,9 @@ public final class EffectSession {
             boolean applyPhysics) {
         Objects.requireNonNull(block, "block");
         Objects.requireNonNull(material, "material");
+        if (cosmeticMode) {
+            return;
+        }
         if (!blockChangeGuard.allows(actor != null ? actor : resolveActor(), block.getLocation())) {
             return;
         }

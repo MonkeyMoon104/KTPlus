@@ -1,6 +1,9 @@
-config-version: "4.0.0"
+config-version: "4.0.1"
 
 disabled-worlds: []
+
+# When true: particles/sounds/displays only — no damage, blocks, potions, knockback, heals, combat spawns.
+cosmetic-mode: false
 
 worldguard:
   block-changes: RESPECT

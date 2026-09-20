@@ -71,7 +71,7 @@ public final class AuraHomingTrail {
                 if (toTarget.length() < 1.5) {
                     connected[0] = true;
                     damageTicks.set(0);
-                    if (pushEnabled) {
+                    if (pushEnabled && session.allowsGameplayMutation(killer, target.getLocation())) {
                         applyLevitation(target);
                         levitatingTargets.add(target.getUniqueId());
                     }
@@ -85,6 +85,10 @@ public final class AuraHomingTrail {
                     end = headPosition;
                 }
             } else if (pushEnabled) {
+                if (!session.allowsGameplayMutation(killer, target.getLocation())) {
+                    drawFloatingWaveLink(visuals, baseStart, end, current, connected[0]);
+                    return true;
+                }
                 maintainLevitation(target);
                 levitatingTargets.add(target.getUniqueId());
                 if (damageTicks.incrementAndGet() % 20 == 0) {

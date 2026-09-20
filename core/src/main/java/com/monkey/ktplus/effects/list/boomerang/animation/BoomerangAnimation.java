@@ -251,7 +251,11 @@ public final class BoomerangAnimation {
         visuals.particle("CLOUD", at, 6, 0.15, 0.1, 0.15, 0.01, null);
         visuals.sound("ENTITY_ITEM_PICKUP", at, 0.9f, 1.25f);
         visuals.sound("ENTITY_EXPERIENCE_ORB_PICKUP", at, 0.45f, 1.5f);
-        if (killer != null && killer.isOnline() && !killer.isDead() && returnHeal > 0.0) {
+        if (killer != null
+                && killer.isOnline()
+                && !killer.isDead()
+                && returnHeal > 0.0
+                && session.allowsGameplayMutation(killer, killer.getLocation())) {
             AttributeInstance maxAttr = killer.getAttribute(Attribute.MAX_HEALTH);
             double max = maxAttr != null ? maxAttr.getValue() : 20.0;
             killer.setHealth(Math.min(max, killer.getHealth() + returnHeal));
