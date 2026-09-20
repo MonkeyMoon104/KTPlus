@@ -118,13 +118,14 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 | 1.21.4 | `v1_21_4` | 1.21.10 | `v1_21_10` |
 | 1.21.5 | `v1_21_5` | 1.21.11 | `v1_21_11` |
 | 1.21.6 | `v1_21_6` | 26.1.x | `v26_1` |
-| 1.21.7 | `v1_21_7` | 26.2.x (+ other 26.x) | `v26_2` |
+| 1.21.7 | `v1_21_7` | 26.2.x | `v26_2` |
+| | | 26.3.x | `v26_3` |
 
 ---
 
 ## Install
 
-1. Put `KTPlus-4.0.0.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
+1. Put `KTPlus-4.0.1.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
 2. Start once. Configs appear under `plugins/KTPlus/`.
 3. Edit what you need → `/kt reload` or restart.
 4. Upgrading from classic **KT**? Keep `plugins/KT/` (the SQLite files), run **only** KTPlus, then use [`/kt import-kt`](#commands).
@@ -235,7 +236,7 @@ All files live under `plugins/KTPlus/`:
 
 | File | Purpose |
 |------|---------|
-| `config.yml` | Global options, worlds, WorldGuard / LuckPerms, schematics |
+| `config.yml` | Global options, worlds, `cosmetic-mode`, WorldGuard / LuckPerms, schematics |
 | `messages.yml` | Messages |
 | `effects.yml` | Catalog — prices, categories, perks, damage |
 | `economy.yml` | Provider, starting balance, kill rewards |
@@ -246,6 +247,17 @@ All files live under `plugins/KTPlus/`:
 | `performance.yml` | Session limits, cooldowns, TPS throttling |
 
 Changes apply with `/kt reload` (or a full restart).
+
+### Cosmetic mode (visuals only)
+
+For vanilla / SMP servers that want kill effects without gameplay impact:
+
+```yaml
+# config.yml
+cosmetic-mode: true
+```
+
+When enabled, effects keep particles, sounds, and display entities, but skip damage, world blocks, potions, knockback, heals, fire ticks, and combat spawns. Random kill events in `events.yml` are separate — disable those too if you want a fully cosmetic setup.
 
 ---
 
@@ -379,7 +391,7 @@ git checkout enhanced
 gradlew.bat build      # Windows
 ```
 
-**Output:** `dist/build/libs/KTPlus-4.0.0.jar`
+**Output:** `dist/build/libs/KTPlus-4.0.1.jar`
 
 | Task | |
 |------|---|
@@ -439,6 +451,7 @@ KTPlus/
 | Review already claimed | Player or account already used | Expected — one claim each |
 | Migration rejected | Wrong target or MySQL &lt; 8 | sqlite/mysql only; upgrade MySQL |
 | Classic KT data missing after upgrade | Old `plugins/KT/` not imported | `/kt import-kt --dry-run`, then with token |
+| Effects still grief / damage on SMP | Cosmetic mode off / random events on | `cosmetic-mode: true` in `config.yml`; disable `events.yml` |
 
 Reproduce on a test server before raising production log noise.
 
