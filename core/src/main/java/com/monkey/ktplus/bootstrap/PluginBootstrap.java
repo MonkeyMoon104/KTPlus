@@ -185,7 +185,8 @@ public final class PluginBootstrap {
             conditions = new EffectConditionService(config);
             cooldowns = new CooldownService();
             hooks = new HookManager();
-            headCollector = new HeadCollectorService(scheduler, users, hooks, visuals);
+            headCollector = new HeadCollectorService(
+                    scheduler, users, hooks, visuals, () -> config.cosmeticMode());
             boot.detail(
                     "Economy",
                     "Provider -> "

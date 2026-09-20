@@ -12,6 +12,7 @@ class NmsBridgeManagerTest {
     @CsvSource({
         "1.21.11, com.monkey.ktplus.nms.NMSBridge_v1_21_11",
         "26.2, com.monkey.ktplus.nms.NMSBridge_v26_2",
+        "26.3, com.monkey.ktplus.nms.NMSBridge_v26_3",
         "1.20.4, ",
         "1.8.8, ",
         "unknown, ",
@@ -28,6 +29,7 @@ class NmsBridgeManagerTest {
     @CsvSource({
         "1.21.11",
         "26.2",
+        "26.3",
     })
     void supportedVersionsContains(String version) {
         assertNotNull(NmsBridgeManager.getSupportedVersions());

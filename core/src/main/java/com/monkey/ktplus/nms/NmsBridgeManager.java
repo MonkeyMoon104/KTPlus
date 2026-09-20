@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class NmsBridgeManager {
     private static @Nullable IPlatformNmsBridge instance;
-    private static final String SUPPORTED_VERSIONS = "1.21.x, 26.1.x, 26.2.x";
+    private static final String SUPPORTED_VERSIONS = "1.21.x, 26.1.x, 26.2.x, 26.3.x";
 
     private NmsBridgeManager() {}
 
@@ -95,6 +95,9 @@ public final class NmsBridgeManager {
         }
         if ("26.2".equals(version) || version.startsWith("26.2.")) {
             return bridgeClass("v26_2");
+        }
+        if ("26.3".equals(version) || version.startsWith("26.3.")) {
+            return bridgeClass("v26_3");
         }
         return null;
     }

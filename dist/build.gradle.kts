@@ -37,6 +37,7 @@ val reobfNmsProjects = listOf(
 val runtimeNmsProjects = listOf(
     ":NMS:v26_1",
     ":NMS:v26_2",
+    ":NMS:v26_3",
 )
 
 val pluginJarFile = layout.buildDirectory.file("libs/KTPlus-${project.version}.jar")

@@ -12,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 public final class CompatBridgeRegistry {
     private static final VersionBridge V1_21 = new CompatBridge_v1_21();
     private static final VersionBridge V26_2 = new CompatBridge_v26_2();
+    private static final VersionBridge V26_3 = new CompatBridge_v26_3();
     private static final Map<String, VersionBridge> BY_MODULE;
 
     static {
@@ -28,6 +29,7 @@ public final class CompatBridgeRegistry {
         map.put("v1_21_11", V1_21);
         map.put("v26_1", V26_2);
         map.put("v26_2", V26_2);
+        map.put("v26_3", V26_3);
         BY_MODULE = Collections.unmodifiableMap(map);
     }
 
@@ -43,7 +45,16 @@ public final class CompatBridgeRegistry {
         }
         String normalized = version.toLowerCase(Locale.ROOT).trim();
         if (normalized.startsWith("26.")) {
-            return normalized.startsWith("26.1") ? "v26_1" : "v26_2";
+            if (normalized.equals("26.1") || normalized.startsWith("26.1.")) {
+                return "v26_1";
+            }
+            if (normalized.equals("26.2") || normalized.startsWith("26.2.")) {
+                return "v26_2";
+            }
+            if (normalized.equals("26.3") || normalized.startsWith("26.3.")) {
+                return "v26_3";
+            }
+            return null;
         }
         if (!normalized.startsWith("1.21")) {
             return null;
