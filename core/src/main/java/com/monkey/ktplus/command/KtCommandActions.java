@@ -31,50 +31,124 @@ public final class KtCommandActions {
     public void reload(CommandSender sender) {
         Objects.requireNonNull(sender, "sender");
         if (!sender.hasPermission("ktplus.reload") && !sender.hasPermission("ktplus.admin")) {
-            sender.sendMessage(bootstrap.config().message("no-permission"));
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
             return;
         }
         bootstrap.reload();
-        sender.sendMessage(bootstrap.config().message("reload-complete"));
+        sender.sendMessage(bootstrap.lang().message(sender, "reload-complete"));
     }
 
     public void set(Player player, String effectId) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(effectId, "effectId");
         KillEffect effect = bootstrap.registry().find(effectId).orElse(null);
-        if (effect == null) {
-            player.sendMessage(bootstrap.config().message("unknown-effect").replace("%effect%", effectId));
+        if (effect == null || !bootstrap.availability().isEnabled(effect.definition().id())) {
+            player.sendMessage(bootstrap.lang().message(player, "unknown-effect").replace("%effect%", effectId));
             return;
         }
         if (!bootstrap.access().canActivate(player, effect.definition())) {
-            player.sendMessage(bootstrap.config().message("no-permission"));
+            player.sendMessage(bootstrap.lang().message(player, "no-permission"));
             return;
         }
         bootstrap.users().selectEffect(player, effect.definition().id());
-        player.sendMessage(bootstrap.config()
-                .message("effect-selected")
-                .replace("%effect%", effect.definition().displayName()));
+        player.sendMessage(bootstrap.lang()
+                .message(player, "effect-selected")
+                .replace(
+                        "%effect%",
+                        bootstrap.lang().effectName(player, effect.definition().id(), effect.definition().displayName())));
     }
 
     public void clear(Player player) {
         Objects.requireNonNull(player, "player");
         bootstrap.users().clearEffect(player);
-        player.sendMessage(bootstrap.config().message("effect-cleared"));
+        player.sendMessage(bootstrap.lang().message(player, "effect-cleared"));
     }
 
     public void test(Player player, String effectId) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(effectId, "effectId");
         if (!player.hasPermission("ktplus.test") && !player.hasPermission("ktplus.admin")) {
-            player.sendMessage(bootstrap.config().message("no-permission"));
+            player.sendMessage(bootstrap.lang().message(player, "no-permission"));
             return;
         }
         KillEffect effect = bootstrap.registry().find(effectId).orElse(null);
-        if (effect == null) {
-            player.sendMessage(bootstrap.config().message("unknown-effect").replace("%effect%", effectId));
+        if (effect == null || !bootstrap.availability().isEnabled(effect.definition().id())) {
+            player.sendMessage(bootstrap.lang().message(player, "unknown-effect").replace("%effect%", effectId));
             return;
         }
         bootstrap.runtime().start(player, player, player.getLocation(), effect);
+    }
+
+    public void disable(CommandSender sender, String effectId) {
+        Objects.requireNonNull(sender, "sender");
+        Objects.requireNonNull(effectId, "effectId");
+        if (!sender.hasPermission("ktplus.disable") && !sender.hasPermission("ktplus.admin")) {
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
+            return;
+        }
+        KillEffect effect = bootstrap.registry().find(effectId).orElse(null);
+        boolean known = effect != null;
+        String id = known ? effect.definition().id() : effectId;
+        var result = bootstrap.availability().disable(id, known);
+        String display = known
+                ? bootstrap.lang().effectName(sender instanceof Player p ? p : null, id, effect.definition().displayName())
+                : effectId;
+        switch (result) {
+            case UNKNOWN -> sender.sendMessage(
+                    bootstrap.lang().message(sender, "unknown-effect").replace("%effect%", effectId));
+            case ALREADY_DISABLED -> sender.sendMessage(
+                    bootstrap.lang().message(sender, "effect-already-disabled").replace("%effect%", display));
+            case DISABLED -> {
+                clearSelectionsForDisabled(id, display);
+                if (bootstrap.gui() != null) {
+                    bootstrap.gui().refreshOpenSessions();
+                }
+                sender.sendMessage(
+                        bootstrap.lang().message(sender, "effect-disabled-ok").replace("%effect%", display));
+            }
+        }
+    }
+
+    public void enable(CommandSender sender, String effectId) {
+        Objects.requireNonNull(sender, "sender");
+        Objects.requireNonNull(effectId, "effectId");
+        if (!sender.hasPermission("ktplus.enable") && !sender.hasPermission("ktplus.admin")) {
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
+            return;
+        }
+        KillEffect effect = bootstrap.registry().find(effectId).orElse(null);
+        boolean known = effect != null;
+        String id = known ? effect.definition().id() : effectId;
+        var result = bootstrap.availability().enable(id, known);
+        String display = known
+                ? bootstrap.lang().effectName(sender instanceof Player p ? p : null, id, effect.definition().displayName())
+                : effectId;
+        switch (result) {
+            case UNKNOWN -> sender.sendMessage(
+                    bootstrap.lang().message(sender, "unknown-effect").replace("%effect%", effectId));
+            case ALREADY_ENABLED -> sender.sendMessage(
+                    bootstrap.lang().message(sender, "effect-already-enabled").replace("%effect%", display));
+            case ENABLED -> {
+                if (bootstrap.gui() != null) {
+                    bootstrap.gui().refreshOpenSessions();
+                }
+                sender.sendMessage(
+                        bootstrap.lang().message(sender, "effect-enabled-ok").replace("%effect%", display));
+            }
+        }
+    }
+
+    private void clearSelectionsForDisabled(String effectId, String displayName) {
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            String selected = bootstrap.users().selectedEffect(online).orElse(null);
+            if (selected != null && selected.equalsIgnoreCase(effectId)) {
+                bootstrap.users().clearEffect(online);
+                online.sendMessage(bootstrap.lang()
+                        .message(online, "effect-disabled-cleared")
+                        .replace("%effect%", bootstrap.lang().effectName(online, effectId, displayName)));
+            }
+        }
+        bootstrap.users().clearSelectedEffectId(effectId);
     }
 
     public void review(CommandSender sender, String target, @Nullable String account) {
@@ -113,14 +187,14 @@ public final class KtCommandActions {
                 sender.sendMessage("/ktplus killcoins bal [player]");
                 return;
             }
-            sender.sendMessage(bootstrap.config()
-                    .message("killcoins-balance")
+            sender.sendMessage(bootstrap.lang()
+                    .message(sender, "killcoins-balance")
                     .replace("%player%", target.getName())
                     .replace("%balance%", Long.toString(bootstrap.economy().balance(target))));
             return;
         }
         if (!sender.hasPermission("ktplus.killcoins.admin") && !sender.hasPermission("ktplus.admin")) {
-            sender.sendMessage(bootstrap.config().message("no-permission"));
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
             return;
         }
         if (args.length < 3) {
@@ -147,14 +221,14 @@ public final class KtCommandActions {
                 return;
         }
         String name = target.getName() == null ? target.getUniqueId().toString() : target.getName();
-        sender.sendMessage(bootstrap.config().message("killcoins-updated").replace("%player%", name));
+        sender.sendMessage(bootstrap.lang().message(sender, "killcoins-updated").replace("%player%", name));
     }
 
     public void migrate(CommandSender sender, String[] args) {
         Objects.requireNonNull(sender, "sender");
         Objects.requireNonNull(args, "args");
         if (!sender.hasPermission("ktplus.migrate") && !sender.hasPermission("ktplus.admin")) {
-            sender.sendMessage(bootstrap.config().message("no-permission"));
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
             return;
         }
         if (args.length < 1) {
@@ -205,7 +279,7 @@ public final class KtCommandActions {
         Objects.requireNonNull(sender, "sender");
         Objects.requireNonNull(args, "args");
         if (!sender.hasPermission("ktplus.migrate") && !sender.hasPermission("ktplus.admin")) {
-            sender.sendMessage(bootstrap.config().message("no-permission"));
+            sender.sendMessage(bootstrap.lang().message(sender, "no-permission"));
             return;
         }
         try {
@@ -249,8 +323,20 @@ public final class KtCommandActions {
     }
 
     public List<String> effectIds() {
+        return enabledEffectIds();
+    }
+
+    public List<String> enabledEffectIds() {
         return bootstrap.registry().all().stream()
                 .map(effect -> effect.definition().id())
+                .filter(id -> bootstrap.availability().isEnabled(id))
+                .collect(Collectors.toList());
+    }
+
+    public List<String> disabledEffectIds() {
+        return bootstrap.registry().all().stream()
+                .map(effect -> effect.definition().id())
+                .filter(id -> bootstrap.availability().isDisabled(id))
                 .collect(Collectors.toList());
     }
 
@@ -274,11 +360,11 @@ public final class KtCommandActions {
     }
 
     public String playerOnlyMessage() {
-        return bootstrap.config().message("player-only");
+        return bootstrap.lang().message("player-only");
     }
 
     public String playerNotFoundMessage() {
-        return bootstrap.config().message("player-not-found");
+        return bootstrap.lang().message("player-not-found");
     }
 
     public void set(org.bukkit.command.CommandSender sender, org.bukkit.entity.Player target, String effectId) {

@@ -3,6 +3,8 @@ package com.monkey.ktplus.storage.repository;
 import com.monkey.ktplus.cache.BoundedCache;
 import com.monkey.ktplus.storage.DatabaseService;
 import java.sql.PreparedStatement;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,6 +43,23 @@ public final class PlayerEffectRepository {
                 "DELETE FROM kt_player_effects WHERE uuid = ?",
                 statement -> statement.setString(1, uuid.toString()));
         cache.put(uuid, Optional.empty());
+    }
+
+    public List<UUID> clearSelectedEffectId(String effectId) {
+        String normalized = effectId.trim().toLowerCase(Locale.ROOT);
+        List<UUID> cleared = database.queryList(
+                "SELECT uuid FROM kt_player_effects WHERE LOWER(effect_id) = ?",
+                statement -> statement.setString(1, normalized),
+                resultSet -> UUID.fromString(resultSet.getString("uuid")));
+        if (!cleared.isEmpty()) {
+            database.update(
+                    "DELETE FROM kt_player_effects WHERE LOWER(effect_id) = ?",
+                    statement -> statement.setString(1, normalized));
+            for (UUID uuid : cleared) {
+                cache.put(uuid, Optional.empty());
+            }
+        }
+        return cleared;
     }
 
     public void clearCache() {

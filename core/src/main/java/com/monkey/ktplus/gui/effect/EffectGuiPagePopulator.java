@@ -7,6 +7,7 @@ import com.monkey.ktplus.effects.api.CategoryDefinition;
 import com.monkey.ktplus.effects.api.EffectCategory;
 import com.monkey.ktplus.effects.api.EffectDefinition;
 import com.monkey.ktplus.effects.api.KillEffect;
+import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.user.UserService;
 import com.monkey.ktplus.util.compat.MaterialResolver;
 import com.monkey.ktplus.util.text.TextFormatter;
@@ -28,23 +29,26 @@ import com.monkey.ktplus.gui.window.GuiChestSlotWriter;
 
 public final class EffectGuiPagePopulator {
     private final ConfigSnapshot config;
+    private final LangService lang;
     private final UserService userService;
     private final EconomyService economyService;
     private final EffectAccessService accessService;
 
     public EffectGuiPagePopulator(
             ConfigSnapshot config,
+            LangService lang,
             UserService userService,
             EconomyService economyService,
             EffectAccessService accessService) {
         this.config = Objects.requireNonNull(config, "config");
+        this.lang = Objects.requireNonNull(lang, "lang");
         this.userService = Objects.requireNonNull(userService, "userService");
         this.economyService = Objects.requireNonNull(economyService, "economyService");
         this.accessService = Objects.requireNonNull(accessService, "accessService");
     }
 
     public EffectGuiPagePopulator withConfig(ConfigSnapshot config) {
-        return new EffectGuiPagePopulator(config, userService, economyService, accessService);
+        return new EffectGuiPagePopulator(config, lang, userService, economyService, accessService);
     }
 
     public void populateTop(
@@ -92,7 +96,10 @@ public final class EffectGuiPagePopulator {
             if (playerSlot < 0 || playerSlot >= contents.length) {
                 continue;
             }
-            CategoryDefinition definition = config.categoryDefinition(category);
+            CategoryDefinition base = config.categoryDefinition(category);
+            String display = lang.categoryDisplayName(player, category.configId(), base.displayName());
+            CategoryDefinition definition =
+                    new CategoryDefinition(category, display, base.tabIconKey(), base.minPrice());
             contents[playerSlot] = GuiTheme.categoryTab(definition, category == selectedCategory);
             session.put(rawSlot, GuiAction.category(category));
         }
@@ -133,7 +140,7 @@ public final class EffectGuiPagePopulator {
                 session,
                 layout,
                 scrollUpSlot,
-                GuiTheme.scrollArrow(config, "scroll-up", canScrollUp),
+                GuiTheme.scrollArrow(config, lang, player, "scroll-up", canScrollUp),
                 canScrollUp
                         ? GuiAction.scroll(GuiActionType.SCROLL_UP, session.category(), Math.max(0, scrollOffset - visibleCount))
                         : null,
@@ -143,7 +150,7 @@ public final class EffectGuiPagePopulator {
                 session,
                 layout,
                 scrollDownSlot,
-                GuiTheme.scrollArrow(config, "scroll-down", canScrollDown),
+                GuiTheme.scrollArrow(config, lang, player, "scroll-down", canScrollDown),
                 canScrollDown
                         ? GuiAction.scroll(
                                 GuiActionType.SCROLL_DOWN,
@@ -156,7 +163,7 @@ public final class EffectGuiPagePopulator {
                 session,
                 layout,
                 filterSlot,
-                GuiTheme.filterHopper(config, session.sortMode()),
+                GuiTheme.filterHopper(config, lang, player, session.sortMode()),
                 GuiAction.simple(GuiActionType.FILTER, session.category(), scrollOffset),
                 reservedSlots);
         addButton(
@@ -167,7 +174,7 @@ public final class EffectGuiPagePopulator {
                 buttonItem(
                         config.guiButtonMaterial("clear", "FIRE_CHARGE"),
                         "FIREBALL",
-                        config.guiButtonName("clear", "&cClear Effect")),
+                        lang.guiText(player, "buttons.clear.name", config.guiButtonName("clear", "&cClear Effect"))),
                 GuiAction.simple(GuiActionType.CLEAR, session.category(), scrollOffset),
                 reservedSlots);
         addButton(
@@ -178,7 +185,7 @@ public final class EffectGuiPagePopulator {
                 buttonItem(
                         config.guiButtonMaterial("close", "OAK_DOOR"),
                         "WOOD_DOOR",
-                        config.guiButtonName("close", "&cClose")),
+                        lang.guiText(player, "buttons.close.name", config.guiButtonName("close", "&cClose"))),
                 GuiAction.simple(GuiActionType.CLOSE, session.category(), scrollOffset),
                 reservedSlots);
         long balance = economyService.balance(player);
@@ -190,7 +197,7 @@ public final class EffectGuiPagePopulator {
                 buttonItem(
                         config.guiButtonMaterial("balance", "GOLD_NUGGET"),
                         "GOLD_NUGGET",
-                        config.guiButtonName("balance", "&6Coins: &f{balance}")
+                        lang.guiText(player, "buttons.balance.name", config.guiButtonName("balance", "&6Coins: &f{balance}"))
                                 .replace("{balance}", String.valueOf(balance))),
                 GuiAction.simple(GuiActionType.BALANCE, session.category(), scrollOffset),
                 reservedSlots);
@@ -227,31 +234,36 @@ public final class EffectGuiPagePopulator {
             return item;
         }
         CategoryDefinition category = config.categoryDefinition(definition.category());
+        String categoryName =
+                lang.categoryDisplayName(player, definition.category().configId(), category.displayName());
+        String displayName = lang.effectName(player, definition.id(), definition.displayName());
+        String description = lang.effectDescription(player, definition.id());
         boolean selected = userService.selectedEffect(player).map(definition.id()::equalsIgnoreCase).orElse(false);
         boolean unlocked = accessService.canActivate(player, definition);
 
         String status = selected
-                ? config.guiText("effect-item.status-selected", "&aSelected")
-                : config.guiText("effect-item.status-click", "&7Click to select");
-        String price = formatPrice(definition);
+                ? lang.guiText(player, "texts.effect-item.status-selected", "&aSelected")
+                : lang.guiText(player, "texts.effect-item.status-click", "&7Click to select");
+        String price = formatPrice(player, definition);
         String lock = unlocked
-                ? config.guiText("effect-item.lock-unlocked", "&aUnlocked")
-                : config.guiText("effect-item.lock-locked", "&cLocked");
+                ? lang.guiText(player, "texts.effect-item.lock-unlocked", "&aUnlocked")
+                : lang.guiText(player, "texts.effect-item.lock-locked", "&cLocked");
 
-        String nameTemplate = config.guiText("effect-item.name", "&b{name}");
-        meta.displayName(TextFormatter.component(nameTemplate.replace("{name}", definition.displayName())));
+        String nameTemplate = lang.guiText(player, "texts.effect-item.name", "&b{name}");
+        meta.displayName(TextFormatter.component(nameTemplate.replace("{name}", displayName)));
 
         List<String> override = config.effectGuiLoreOverride(definition.id());
         List<String> template = override.isEmpty()
-                ? config.guiTextList(
-                        "effect-item.lore",
-                        List.of("{category}", "{status}", "{price}", "{lock}"))
+                ? lang.guiTextList(
+                        player,
+                        "texts.effect-item.lore",
+                        List.of("{description}", "{category}", "{status}", "{price}", "{lock}"))
                 : override;
 
         List<String> lore = new ArrayList<>();
         for (String line : template) {
             lore.add(TextFormatter.color(applyEffectPlaceholders(
-                    line, definition.displayName(), category.displayName(), status, price, lock, definition.price())));
+                    line, displayName, description, categoryName, status, price, lock, definition.price())));
         }
         meta.lore(lore.stream().map(TextFormatter::component).toList());
         item.setItemMeta(meta);
@@ -261,12 +273,14 @@ public final class EffectGuiPagePopulator {
     private static String applyEffectPlaceholders(
             String line,
             String name,
+            String description,
             String category,
             String status,
             String price,
             String lock,
             int rawPrice) {
         return line.replace("{name}", name)
+                .replace("{description}", description)
                 .replace("{category}", category)
                 .replace("{status}", status)
                 .replace("{price}", price)
@@ -312,11 +326,11 @@ public final class EffectGuiPagePopulator {
         return item;
     }
 
-    private String formatPrice(EffectDefinition definition) {
+    private String formatPrice(Player player, EffectDefinition definition) {
         if (definition.price() <= 0) {
-            return config.guiText("effect-item.price-free", "&7Price: &aFree");
+            return lang.guiText(player, "texts.effect-item.price-free", "&7Price: &aFree");
         }
-        return config.guiText("effect-item.price-paid", "&7Price: &f{price} coins")
+        return lang.guiText(player, "texts.effect-item.price-paid", "&7Price: &f{price} coins")
                 .replace("{price}", String.format("%,d", definition.price()));
     }
 }

@@ -42,6 +42,9 @@ public final class KillListener implements Listener {
         if (effect == null) {
             return;
         }
+        if (!bootstrap.availability().isEnabled(effect.definition().id())) {
+            return;
+        }
         if (!bootstrap.conditions().allowsTrigger(killer, effect.definition())) {
             return;
         }

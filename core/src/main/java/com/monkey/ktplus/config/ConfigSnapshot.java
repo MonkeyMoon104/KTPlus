@@ -73,6 +73,48 @@ public final class ConfigSnapshot {
         return guiStructure;
     }
 
+    public String defaultLanguage() {
+        String value = main.getString("default-language", "EN");
+        return value == null || value.isBlank() ? "EN" : value.trim();
+    }
+
+    public @Nullable String messageOverlay(String key) {
+        if (!messages.isSet(key)) {
+            return null;
+        }
+        String value = messages.getString(key);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value;
+    }
+
+    public @Nullable String effectNameOverlay(String id) {
+        String value = firstNonBlank(
+                gui.isSet("effects." + id + ".name") ? gui.getString("effects." + id + ".name") : null,
+                effects.isSet("effects." + id + ".name") ? effects.getString("effects." + id + ".name") : null);
+        return value.isBlank() ? null : value;
+    }
+
+    public @Nullable String guiTextOverlay(String path) {
+        if (!gui.isSet("texts." + path) && !gui.isSet(path)) {
+            return null;
+        }
+        String value = firstNonBlank(gui.getString("texts." + path), gui.getString(path));
+        return value.isBlank() ? null : value;
+    }
+
+    public @Nullable String categoryDisplayNameOverlay(String categoryId) {
+        if (!gui.isSet("categories." + categoryId + ".display-name")
+                && !effects.isSet("categories." + categoryId + ".display-name")) {
+            return null;
+        }
+        String value = firstNonBlank(
+                gui.getString("categories." + categoryId + ".display-name"),
+                effects.getString("categories." + categoryId + ".display-name"));
+        return value.isBlank() ? null : value;
+    }
+
     public String message(String key) {
         String prefix = messages.getString("prefix", "");
         if (prefix == null) {

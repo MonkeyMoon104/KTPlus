@@ -125,7 +125,7 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 
 ## Install
 
-1. Put `KTPlus-4.0.1.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
+1. Put `KTPlus-4.0.2.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
 2. Start once. Configs appear under `plugins/KTPlus/`.
 3. Edit what you need → `/kt reload` or restart.
 4. Upgrading from classic **KT**? Keep `plugins/KT/` (the SQLite files), run **only** KTPlus, then use [`/kt import-kt`](#commands).
@@ -153,6 +153,8 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 | `/kt set <effect> [player]` | Select effect | `ktplus.set` / `.others` |
 | `/kt clear [player]` | Clear selection | `ktplus.clear` / `.others` |
 | `/kt test <effect>` | Preview at your location | `ktplus.test` |
+| `/kt disable <effect>` | Hide effect from shop / use | `ktplus.disable` |
+| `/kt enable <effect>` | Re-enable a disabled effect | `ktplus.enable` |
 | `/kt killcoins bal [player]` | Show balance | `ktplus.killcoins` |
 | `/kt killcoins add\|take\|set\|reset <player> <amount>` | Edit balance | `ktplus.killcoins.admin` |
 | `/kt review <github\|spigotmc> <account>` | Claim review reward | (players) |
@@ -236,17 +238,38 @@ All files live under `plugins/KTPlus/`:
 
 | File | Purpose |
 |------|---------|
-| `config.yml` | Global options, worlds, `cosmetic-mode`, WorldGuard / LuckPerms, schematics |
-| `messages.yml` | Messages |
+| `config.yml` | Global options, worlds, `cosmetic-mode`, `default-language`, WorldGuard / LuckPerms, schematics |
+| `lang/` | Language packs (`EN.yml`, `IT.yml`, …) — messages, GUI chrome, effect names & descriptions |
+| `messages.yml` | Optional message overrides (any set key overrides lang for all players) |
 | `effects.yml` | Catalog — prices, categories, perks, damage |
+| `gui.yml` | GUI layout and item materials |
+| `disabled-effects.yml` | Effects disabled via `/kt disable` |
 | `economy.yml` | Provider, starting balance, kill rewards |
-| `gui.yml` | GUI layout and items |
 | `database.yml` | Engine, credentials, pool |
 | `events.yml` | Optional random events |
 | `resource-pack.yml` | Pack URL / hash / required + sound keys |
 | `performance.yml` | Session limits, cooldowns, TPS throttling |
 
 Changes apply with `/kt reload` (or a full restart).
+
+### Disable / enable effects
+
+Hide effects from the shop, tab-complete, `/kt set` / `/kt test`, and kill triggers without revoking purchases:
+
+```text
+/kt disable cloud
+/kt enable cloud
+```
+
+Tab-complete lists only enabled ids for `disable`, and only disabled ids for `enable`. Open GUIs refresh live. Players who had that effect selected are cleared and notified; ownership stays so they can re-select after `/kt enable`.
+
+### Language packs
+
+On first start KTPlus creates `plugins/KTPlus/lang/` and copies `EN.yml` (canonical schema).
+
+- File names must be **exactly** two uppercase letters + `.yml` (`EN.yml`, `IT.yml`, `ES.yml`). Other names are ignored.
+- Players get the pack matching their client language (`player.locale()`); unknown locales use `default-language` in `config.yml` (default `EN`).
+- Missing keys in a pack fall back to `EN` (console warns). Prefer editing `lang/` for translations; use `messages.yml` only for server-wide overrides.
 
 ### Cosmetic mode (visuals only)
 
@@ -391,7 +414,7 @@ git checkout enhanced
 gradlew.bat build      # Windows
 ```
 
-**Output:** `dist/build/libs/KTPlus-4.0.1.jar`
+**Output:** `dist/build/libs/KTPlus-4.0.2.jar`
 
 | Task | |
 |------|---|

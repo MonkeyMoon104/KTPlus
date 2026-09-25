@@ -14,13 +14,17 @@ public final class LampCommandBootstrap {
         Objects.requireNonNull(plugin, "plugin");
         Objects.requireNonNull(actions, "actions");
         try {
-            EffectIdSuggestions.bind(actions::effectIds);
+            EffectIdSuggestions.bind(actions::enabledEffectIds);
+            EnabledEffectIdSuggestions.bind(actions::enabledEffectIds);
+            DisabledEffectIdSuggestions.bind(actions::disabledEffectIds);
             BukkitLampConfig<BukkitCommandActor> config = BukkitLampConfig.createDefault(plugin);
             BukkitLamp.builder(config).build().register(new KtLampCommands(actions));
             plugin.getLogger().info("[Commands] Lamp command tree registered");
             return true;
         } catch (Throwable error) {
             EffectIdSuggestions.clear();
+            EnabledEffectIdSuggestions.clear();
+            DisabledEffectIdSuggestions.clear();
             plugin.getLogger().warning("[Commands] Lamp unavailable, using Bukkit executor: " + error.getMessage());
             return false;
         }

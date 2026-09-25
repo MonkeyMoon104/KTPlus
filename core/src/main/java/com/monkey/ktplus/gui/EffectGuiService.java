@@ -10,9 +10,11 @@ import com.monkey.ktplus.economy.EconomyService;
 import com.monkey.ktplus.effects.api.EffectCategory;
 import com.monkey.ktplus.effects.api.EffectDefinition;
 import com.monkey.ktplus.effects.api.KillEffect;
+import com.monkey.ktplus.effects.availability.EffectAvailabilityService;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
 import com.monkey.ktplus.gui.inventory.PlayerInventoryGuard;
 import com.monkey.ktplus.gui.inventory.PlayerInventorySnapshot;
+import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.user.UserService;
 import com.monkey.ktplus.util.OnceLogger;
 import com.monkey.ktplus.util.text.TextFormatter;
@@ -53,6 +55,8 @@ public final class EffectGuiService {
     private final PlayerInventoryGuard inventoryGuard;
     private ConfigSnapshot config;
     private EffectRegistry registry;
+    private final EffectAvailabilityService availability;
+    private final LangService lang;
     private final UserService userService;
     private final EconomyService economyService;
     private final EffectAccessService accessService;
@@ -64,6 +68,8 @@ public final class EffectGuiService {
     public EffectGuiService(
             ConfigSnapshot config,
             EffectRegistry registry,
+            EffectAvailabilityService availability,
+            LangService lang,
             UserService userService,
             EconomyService economyService,
             EffectAccessService accessService,
@@ -73,6 +79,8 @@ public final class EffectGuiService {
             OnceLogger onceLogger) {
         this.config = Objects.requireNonNull(config, "config");
         this.registry = Objects.requireNonNull(registry, "registry");
+        this.availability = Objects.requireNonNull(availability, "availability");
+        this.lang = Objects.requireNonNull(lang, "lang");
         this.userService = Objects.requireNonNull(userService, "userService");
         this.economyService = Objects.requireNonNull(economyService, "economyService");
         this.accessService = Objects.requireNonNull(accessService, "accessService");
@@ -80,7 +88,7 @@ public final class EffectGuiService {
         this.inventoryGuard = Objects.requireNonNull(inventoryGuard, "inventoryGuard");
         this.backend = Objects.requireNonNull(backend, "backend");
         this.onceLogger = Objects.requireNonNull(onceLogger, "onceLogger");
-        this.populator = new EffectGuiPagePopulator(config, userService, economyService, accessService);
+        this.populator = new EffectGuiPagePopulator(config, lang, userService, economyService, accessService);
     }
 
     public void reload(ConfigSnapshot config, EffectRegistry registry) {
@@ -165,14 +173,14 @@ public final class EffectGuiService {
                 break;
             case CLEAR:
                 userService.clearEffect(player);
-                player.sendMessage(config.message("effect-cleared"));
+                player.sendMessage(lang.message(player, "effect-cleared"));
                 refresh(player, currentCategory(player), currentScroll(player));
                 break;
             case CLOSE:
                 player.closeInventory();
                 break;
             case BALANCE:
-                player.sendMessage(config.message("killcoins-balance")
+                player.sendMessage(lang.message(player, "killcoins-balance")
                         .replace("%player%", player.getName())
                         .replace("%balance%", Long.toString(economyService.balance(player))));
                 break;
@@ -232,7 +240,7 @@ public final class EffectGuiService {
         refreshInPlace(player, category, 0);
         GuiWindowHandle window = windowHandles.get(player.getUniqueId());
         if (window != null) {
-            window.updateTitle(player, GuiTitleCompat.fusedTitle(config, category));
+            window.updateTitle(player, GuiTitleCompat.fusedTitle(config, lang, player, category));
         }
     }
 
@@ -336,6 +344,7 @@ public final class EffectGuiService {
                     session,
                     sessions,
                     config,
+                    lang,
                     populator,
                     visibleEffects,
                     categoryEffects.size(),
@@ -364,7 +373,7 @@ public final class EffectGuiService {
             int totalInCategory,
             int scrollOffset,
             GuiLayout layout) {
-        String title = GuiTitleCompat.fusedTitle(config, session.category());
+        String title = GuiTitleCompat.fusedTitle(config, lang, player, session.category());
         Inventory inventory =
                 Bukkit.createInventory(
                         new VanillaInventoryHolder(session.id()), layout.size(), TextFormatter.component(title));
@@ -383,13 +392,13 @@ public final class EffectGuiService {
 
     private void selectEffect(Player player, String effectId, EffectCategory category, int scrollOffset) {
         KillEffect effect = registry.find(effectId).orElse(null);
-        if (effect == null) {
-            player.sendMessage(config.message("unknown-effect").replace("%effect%", effectId));
+        if (effect == null || !availability.isEnabled(effect.definition().id())) {
+            player.sendMessage(lang.message(player, "unknown-effect").replace("%effect%", effectId));
             return;
         }
         EffectDefinition definition = effect.definition();
         EffectSelectionService.Outcome outcome = selectionService.select(player, definition);
-        for (String message : EffectSelectionFeedback.messages(config, outcome, definition)) {
+        for (String message : EffectSelectionFeedback.messages(lang, player, outcome, definition)) {
             player.sendMessage(message);
         }
         if (outcome == EffectSelectionService.Outcome.DENIED_PERMISSION
@@ -399,10 +408,25 @@ public final class EffectGuiService {
         refresh(player, category, scrollOffset);
     }
 
+    public void refreshOpenSessions() {
+        for (UUID playerId : new ArrayList<>(sessions.activePlayerIds())) {
+            Player player = Bukkit.getPlayer(playerId);
+            if (player == null || !player.isOnline()) {
+                continue;
+            }
+            GuiSession session = sessions.get(player).orElse(null);
+            if (session == null) {
+                continue;
+            }
+            refresh(player, session.category(), session.scrollOffset());
+        }
+    }
+
     private List<KillEffect> effectsForCategory(Player player, EffectCategory category) {
         EffectGuiSortMode mode = sortMode(player, category);
         return registry.all().stream()
                 .filter(effect -> effect.definition().category() == category)
+                .filter(effect -> availability.isEnabled(effect.definition().id()))
                 .sorted(mode.comparator(player, accessService, economyService, userService))
                 .collect(Collectors.toList());
     }

@@ -8,6 +8,7 @@ import com.monkey.ktplus.economy.EconomyProviderType;
 import com.monkey.ktplus.economy.EconomyService;
 import com.monkey.ktplus.economy.balance.BalanceProvider;
 import com.monkey.ktplus.economy.balance.BalanceProviderFactory;
+import com.monkey.ktplus.effects.availability.EffectAvailabilityService;
 import com.monkey.ktplus.effects.condition.EffectConditionService;
 import com.monkey.ktplus.effects.custom.CustomEffectLoader;
 import com.monkey.ktplus.effects.list.headcollector.HeadCollectorService;
@@ -22,6 +23,7 @@ import com.monkey.ktplus.export.EffectCatalogExporter;
 import com.monkey.ktplus.gui.EffectGuiService;
 import com.monkey.ktplus.hook.HookManager;
 import com.monkey.ktplus.hook.worldguard.WorldGuardHook;
+import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.listener.resourcepack.ResourcePackJoinListener;
 import com.monkey.ktplus.review.ReviewRewardService;
 import com.monkey.ktplus.storage.DatabaseService;
@@ -57,7 +59,9 @@ public final class PluginReloadSupport {
             EffectConditionService conditions,
             RandomEventService randomEvents,
             @Nullable ResourcePackJoinListener resourcePackJoinListener,
-            @Nullable ReviewRewardService reviews) {
+            @Nullable ReviewRewardService reviews,
+            EffectAvailabilityService availability,
+            LangService lang) {
         Objects.requireNonNull(plugin, "plugin");
         Objects.requireNonNull(previous, "previous");
         Objects.requireNonNull(configManager, "configManager");
@@ -73,6 +77,8 @@ public final class PluginReloadSupport {
         Objects.requireNonNull(access, "access");
         Objects.requireNonNull(conditions, "conditions");
         Objects.requireNonNull(randomEvents, "randomEvents");
+        Objects.requireNonNull(availability, "availability");
+        Objects.requireNonNull(lang, "lang");
 
         runtime.cancelAll(CancellationReason.RELOAD);
         if (taskRegistry != null) {
@@ -89,6 +95,8 @@ public final class PluginReloadSupport {
         ConfigSnapshot config = configManager.load();
         new ConfigIntegrityChecker(plugin).validate();
         warnIfDatabaseChanged(plugin, previous, config, database);
+        lang.bindConfig(config);
+        availability.reload();
 
         registry.clear();
         new BuiltInEffectRegistrar(config, visuals, new SchematicLibrary(plugin), plugin.getLogger(), headCollector)
@@ -113,7 +121,7 @@ public final class PluginReloadSupport {
                 registry,
                 access);
         economy.setLuckPermsHook(hooks.luckPerms());
-        runtime.reload(config, hooks.worldGuard()::allowsProtectedAction);
+        runtime.reload(config, lang, hooks.worldGuard()::allowsProtectedAction);
         conditions.reload(config);
         if (gui != null) {
             gui.reload(config, registry);

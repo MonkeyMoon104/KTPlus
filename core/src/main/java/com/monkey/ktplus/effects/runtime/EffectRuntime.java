@@ -9,6 +9,7 @@ import com.monkey.ktplus.effects.list.fireworks.animation.FireworksSettings;
 import com.monkey.ktplus.effects.visual.VisualEffectService;
 import com.monkey.ktplus.effects.runtime.block.BlockChangeGuard;
 import com.monkey.ktplus.effects.runtime.block.TemporaryBlockService;
+import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.platform.ServerLoadProbe;
 import com.monkey.ktplus.scheduler.PlatformScheduler;
 import com.monkey.ktplus.task.CancellationReason;
@@ -36,14 +37,17 @@ public final class EffectRuntime {
     private final EffectEntityRegistry entityRegistry = new EffectEntityRegistry();
     private final FireworksFinaleService fireworksFinale;
     private ConfigSnapshot config;
+    private LangService lang;
 
     public EffectRuntime(
             ConfigSnapshot config,
+            LangService lang,
             PlatformScheduler scheduler,
             TaskRegistry taskRegistry,
             TemporaryBlockService temporaryBlocks,
             BlockChangeGuard blockChangeGuard) {
         this.config = Objects.requireNonNull(config, "config");
+        this.lang = Objects.requireNonNull(lang, "lang");
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler");
         this.taskRegistry = Objects.requireNonNull(taskRegistry, "taskRegistry");
         this.temporaryBlocks = Objects.requireNonNull(temporaryBlocks, "temporaryBlocks");
@@ -51,8 +55,9 @@ public final class EffectRuntime {
         this.fireworksFinale = new FireworksFinaleService(scheduler, entityRegistry, blockChangeGuard);
     }
 
-    public void reload(ConfigSnapshot config, BlockChangeGuard blockChangeGuard) {
+    public void reload(ConfigSnapshot config, LangService lang, BlockChangeGuard blockChangeGuard) {
         this.config = Objects.requireNonNull(config, "config");
+        this.lang = Objects.requireNonNull(lang, "lang");
         this.blockChangeGuard = Objects.requireNonNull(blockChangeGuard, "blockChangeGuard");
     }
 
@@ -93,7 +98,7 @@ public final class EffectRuntime {
             heavySessions.incrementAndGet();
         }
         try {
-            effect.execute(new EffectContext(killer, victim, location.clone(), config), session);
+            effect.execute(new EffectContext(killer, victim, location.clone(), config, lang), session);
             if (!session.active()) {
                 return false;
             }

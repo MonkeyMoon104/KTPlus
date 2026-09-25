@@ -100,6 +100,42 @@ public final class KtLampCommands {
         test(actor, effectId);
     }
 
+    @Command("ktplus disable")
+    public void disableKtPlus(
+            BukkitCommandActor actor, @SuggestWith(EnabledEffectIdSuggestions.class) String effectId) {
+        actions.disable(actor.sender(), effectId);
+    }
+
+    @Command("kt disable")
+    public void disableKt(
+            BukkitCommandActor actor, @SuggestWith(EnabledEffectIdSuggestions.class) String effectId) {
+        actions.disable(actor.sender(), effectId);
+    }
+
+    @Command("killeffect disable")
+    public void disableKillEffect(
+            BukkitCommandActor actor, @SuggestWith(EnabledEffectIdSuggestions.class) String effectId) {
+        actions.disable(actor.sender(), effectId);
+    }
+
+    @Command("ktplus enable")
+    public void enableKtPlus(
+            BukkitCommandActor actor, @SuggestWith(DisabledEffectIdSuggestions.class) String effectId) {
+        actions.enable(actor.sender(), effectId);
+    }
+
+    @Command("kt enable")
+    public void enableKt(
+            BukkitCommandActor actor, @SuggestWith(DisabledEffectIdSuggestions.class) String effectId) {
+        actions.enable(actor.sender(), effectId);
+    }
+
+    @Command("killeffect enable")
+    public void enableKillEffect(
+            BukkitCommandActor actor, @SuggestWith(DisabledEffectIdSuggestions.class) String effectId) {
+        actions.enable(actor.sender(), effectId);
+    }
+
     @Command("ktplus killcoins")
     public void killCoinsKtPlus(
             BukkitCommandActor actor,

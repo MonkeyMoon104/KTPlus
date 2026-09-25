@@ -37,8 +37,8 @@ public final class HeadCollectorKillEffect implements KillEffect {
         int inherited = collector.inheritHeads(context.killer(), victim, settings);
         if (inherited > 0) {
             context.killer()
-                    .sendMessage(context.config()
-                            .message("headcollector-inherited")
+                    .sendMessage(context.lang()
+                            .message(context.killer(), "headcollector-inherited")
                             .replace("%amount%", String.valueOf(inherited)));
         }
         HeadIntroAnimation.play(

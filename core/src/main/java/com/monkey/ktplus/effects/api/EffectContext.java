@@ -1,6 +1,7 @@
 package com.monkey.ktplus.effects.api;
 
 import com.monkey.ktplus.config.ConfigSnapshot;
+import com.monkey.ktplus.lang.LangService;
 import java.util.Objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -12,13 +13,19 @@ public final class EffectContext {
     private final @Nullable Entity victim;
     private final Location location;
     private final ConfigSnapshot config;
+    private final LangService lang;
 
     public EffectContext(
-            Player killer, @Nullable Entity victim, Location location, ConfigSnapshot config) {
+            Player killer,
+            @Nullable Entity victim,
+            Location location,
+            ConfigSnapshot config,
+            LangService lang) {
         this.killer = Objects.requireNonNull(killer, "killer");
         this.victim = victim;
         this.location = Objects.requireNonNull(location, "location");
         this.config = Objects.requireNonNull(config, "config");
+        this.lang = Objects.requireNonNull(lang, "lang");
     }
 
     public Player killer() {
@@ -35,5 +42,9 @@ public final class EffectContext {
 
     public ConfigSnapshot config() {
         return config;
+    }
+
+    public LangService lang() {
+        return lang;
     }
 }

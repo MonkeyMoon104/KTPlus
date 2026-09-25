@@ -1,0 +1,315 @@
+# KTPlus language pack (canonical schema).
+# Copy as IT.yml / ES.yml / ... using ONLY two uppercase letters + .yml
+
+prefix: "&8[&bKT+&8] &7"
+no-permission: "&cYou do not have permission."
+player-only: "&cOnly players can use this command."
+player-not-found: "&cPlayer not found."
+unknown-effect: "&cUnknown effect: &f%effect%&c."
+effect-selected: "&aSelected effect: &f%effect%&a."
+effect-cleared: "&aYour kill effect has been cleared."
+reload-complete: "&aKT+ reloaded."
+not-enough-coins: "&cYou need &f%price% &ccoins for this effect."
+effect-purchased: "&aPurchased and selected &f%effect%&a."
+effect-locked: "&cThis effect is locked."
+killcoins-balance: "&a%player% has &f%balance% &acoins."
+killcoins-updated: "&aUpdated balance for &f%player%&a."
+effect-test-started: "&aTesting effect: &f%effect%&a."
+effect-test-failed: "&cCould not start &f%effect%&c (server load limit). Try again in a moment."
+headcollector-inherited: "&aYou inherited &f%amount% &aheads."
+
+# --- disable/enable ---
+effect-already-disabled: "&cEffect &f%effect% &cis already disabled."
+effect-already-enabled: "&cEffect &f%effect% &cis already enabled."
+effect-disabled-ok: "&aDisabled effect: &f%effect%&a."
+effect-enabled-ok: "&aEnabled effect: &f%effect%&a."
+effect-disabled-cleared: "&cYour selected effect &f%effect% &cwas disabled. You have no effect selected."
+
+gui:
+  title: "&0KTPlus Effects"
+  categories:
+    common:
+      display-name: "&fCommon"
+    non-common:
+      display-name: "&9Non-Common"
+    rare:
+      display-name: "&6Rare"
+    very-rare:
+      display-name: "&aVery Rare"
+    epic:
+      display-name: "&5Epic"
+    legendary:
+      display-name: "&bLegendary"
+    ultra:
+      display-name: "&4Ultra"
+  buttons:
+    scroll-up:
+      name: "&eScroll Up"
+    scroll-up-disabled:
+      name: "&8Scroll Up"
+    scroll-down:
+      name: "&eScroll Down"
+    scroll-down-disabled:
+      name: "&8Scroll Down"
+    filter:
+      name: "&6Filter &8| {mode}"
+    close:
+      name: "&cClose"
+    clear:
+      name: "&cClear Effect"
+    balance:
+      name: "&6Coins: &f{balance}"
+  texts:
+    empty-effect:
+      name: "&f "
+    filter-mode-active: "&a▶ {label}"
+    filter-mode-inactive: "&8  {label}"
+    filter-modes:
+      NONE: "None"
+      NAME_ASC: "Name A → Z"
+      NAME_DESC: "Name Z → A"
+      PRICE_ASC: "Price ↑"
+      PRICE_DESC: "Price ↓"
+      FREE_FIRST: "Free first"
+      UNLOCKED_FIRST: "Unlocked first"
+      LOCKED_FIRST: "Locked first"
+      AFFORDABLE_FIRST: "Affordable first"
+      SELECTED_FIRST: "Selected first"
+      HEAVY_FIRST: "Heavy first"
+      ID_ASC: "ID A → Z"
+    effect-item:
+      name: "&b{name}"
+      lore:
+        - "{description}"
+        - "{category}"
+        - "{status}"
+        - "{price}"
+        - "{lock}"
+      status-selected: "&aSelected"
+      status-click: "&7Click to select"
+      price-free: "&7Price: &aFree"
+      price-paid: "&7Price: &f{price} coins"
+      lock-unlocked: "&aUnlocked"
+      lock-locked: "&cLocked"
+  button-lore:
+    filter:
+      - "&7Sort for &fthis category &7only"
+      - "&eLeft-click &7next option"
+      - "&eRight-click &7previous option"
+      - "&8"
+      - "{modes}"
+
+effects:
+  cloud:
+    name: "Cloud"
+    description: "&7A soft fog rolls over the kill area."
+  smoke:
+    name: "Smoke"
+    description: "&7Thick smoke erupts from the impact."
+  hearts:
+    name: "Hearts"
+    description: "&7Romantic hearts burst around the victim."
+  notes:
+    name: "Notes"
+    description: "&7Musical notes dance through the air."
+  earthquake:
+    name: "Earthquake"
+    description: "&7The ground cracks and shakes violently."
+  tornado:
+    name: "Tornado"
+    description: "&7A swirling tornado lifts debris skyward."
+  end:
+    name: "End"
+    description: "&7Ender energy tears open a portal rift."
+  headcollector:
+    name: "Head Collector"
+    description: "&7Claim heads and stack your trophies."
+  totem:
+    name: "Totem"
+    description: "&7Totem magic flares at the kill site."
+  lightning:
+    name: "Lightning"
+    description: "&7A bolt of lightning strikes the victim."
+  grave:
+    name: "Grave"
+    description: "&7A corpse rests where they fell."
+  explosion:
+    name: "Explosion"
+    description: "&7A sharp blast rocks the surroundings."
+  mace:
+    name: "Mace"
+    description: "&7A crushing mace slam hits home."
+  skeleton:
+    name: "Skeleton"
+    description: "&7Bones rattle as a skeleton rises."
+  sniper:
+    name: "Sniper"
+    description: "&7A precise sniper shot rings out."
+  glowmissile:
+    name: "Glow Missile"
+    description: "&7A glowing missile homes in."
+  shockwave:
+    name: "Shockwave"
+    description: "&7A shockwave ripples outward."
+  enchantcolumn:
+    name: "Enchant Column"
+    description: "&7An enchanted column erupts upward."
+  fireworks:
+    name: "Fireworks"
+    description: "&7Celebratory fireworks light the sky."
+  aurafarming:
+    name: "Aura Farming"
+    description: "&7An aura farm trails curse energy."
+  dimensionalrift:
+    name: "Dimensional Rift"
+    description: "&7Reality splits into a dimensional rift."
+  firephoenix:
+    name: "Fire Phoenix"
+    description: "&7A phoenix of fire is reborn."
+  prismaticnova:
+    name: "Prismatic Nova"
+    description: "&7A prismatic nova blooms brightly."
+  stellarcollapse:
+    name: "Stellar Collapse"
+    description: "&7Stars collapse into a dark core."
+  voidlotus:
+    name: "Void Lotus"
+    description: "&7A void lotus unfolds in silence."
+  wither:
+    name: "Wither"
+    description: "&7Wither power corrupts the air."
+  warden:
+    name: "Warden"
+    description: "&7The warden’s roar shakes the night."
+  magnet:
+    name: "Magnet"
+    description: "&7Magnetic force pulls everything in."
+  bubbletrap:
+    name: "Bubble Trap"
+    description: "&7Bubbles trap foes in place."
+  inksquid:
+    name: "Ink Squid"
+    description: "&7Ink clouds blind the battlefield."
+  beeswarm:
+    name: "Bee Swarm"
+    description: "&7An angry bee swarm takes flight."
+  sandstorm:
+    name: "Sandstorm"
+    description: "&7Sand scours the battlefield."
+  lightningrod:
+    name: "Lightning Rod"
+    description: "&7Lightning chains from a rod."
+  boomerang:
+    name: "Boomerang"
+    description: "&7A deadly boomerang returns."
+  mirrorclone:
+    name: "Mirror Clone"
+    description: "&7Mirror clones confuse the fight."
+  geyser:
+    name: "Geyser"
+    description: "&7A scalding geyser erupts."
+  cactusbarrage:
+    name: "Cactus Barrage"
+    description: "&7Cacti rain down in a barrage."
+  blackhole:
+    name: "Black Hole"
+    description: "&7A black hole warps space itself."
+  clockrewind:
+    name: "Clock Rewind"
+    description: "&7Time rewinds in a clock spiral."
+  railgun:
+    name: "Railgun"
+    description: "&7A railgun beam punches through."
+  puppetstrings:
+    name: "Puppet Strings"
+    description: "&7Puppet strings seize control."
+  alchemy:
+    name: "Alchemy"
+    description: "&7Alchemic reactions cascade."
+  crystalspire:
+    name: "Crystal Spire"
+    description: "&7Crystal spires pierce skyward."
+  dragonnest:
+    name: "Dragon Nest"
+    description: "&7A dragon nest awakens."
+  gravitywell:
+    name: "Gravity Well"
+    description: "&7Gravity wells crush the area."
+  arcade:
+    name: "Arcade"
+    description: "&7Arcade chaos floods the scene."
+  kaiju:
+    name: "Kaiju"
+    description: "&7A kaiju stomp shakes the earth."
+  sparkler:
+    name: "Sparkler"
+    description: "&7Sparklers shower bright trails."
+  snowballstorm:
+    name: "Snowball Storm"
+    description: "&7A storm of snowballs flies."
+  lanternrise:
+    name: "Lantern Rise"
+    description: "&7Lanterns rise into the night."
+  vinegrasp:
+    name: "Vine Grasp"
+    description: "&7Vines grasp and bind."
+  echobat:
+    name: "Echo Bat"
+    description: "&7Echoing bats screech past."
+  paintbomb:
+    name: "Paint Bomb"
+    description: "&7A paint bomb splatters color."
+  chainsaw:
+    name: "Chainsaw"
+    description: "&7A roaring chainsaw tears through."
+  meteorshower:
+    name: "Meteor Shower"
+    description: "&7Meteors rain from the heavens."
+  icerink:
+    name: "Ice Rink"
+    description: "&7Ice spreads into a slick rink."
+  hookshot:
+    name: "Hookshot"
+    description: "&7A hookshot yanks its target."
+  solarflare:
+    name: "Solar Flare"
+    description: "&7A solar flare sears the ground."
+  quillstorm:
+    name: "Quill Storm"
+    description: "&7Quills storm across the field."
+  bloodmoon:
+    name: "Blood Moon"
+    description: "&7A blood moon hungers above."
+  serpentcoil:
+    name: "Serpent Coil"
+    description: "&7Serpents coil around the fallen."
+  forgeanvil:
+    name: "Forge Anvil"
+    description: "&7A forge anvil slams down."
+  prismbeam:
+    name: "Prism Beam"
+    description: "&7A prism beam cuts the dark."
+  hauntedchoir:
+    name: "Haunted Choir"
+    description: "&7A haunted choir sings."
+  origami:
+    name: "Origami"
+    description: "&7Origami forms fold into life."
+  abyssgate:
+    name: "Abyss Gate"
+    description: "&7An abyss gate yawns open."
+  crownofash:
+    name: "Crown of Ash"
+    description: "&7A crown of ash settles."
+  chronosphere:
+    name: "Chronosphere"
+    description: "&7A chronosphere freezes time."
+  realityglitch:
+    name: "Reality Glitch"
+    description: "&7Reality glitches and fractures."
+  judgment:
+    name: "Judgment"
+    description: "&7Judgment strikes from above."
+  cosmicfinale:
+    name: "Cosmic Finale"
+    description: "&7A cosmic finale ends it all."

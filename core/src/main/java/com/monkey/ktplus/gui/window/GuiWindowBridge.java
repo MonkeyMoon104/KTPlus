@@ -3,6 +3,7 @@ package com.monkey.ktplus.gui.window;
 import com.monkey.ktplus.common.gui.GuiBackend;
 import com.monkey.ktplus.config.ConfigSnapshot;
 import com.monkey.ktplus.effects.api.KillEffect;
+import com.monkey.ktplus.lang.LangService;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,6 +26,7 @@ public final class GuiWindowBridge {
             GuiSession session,
             GuiSessionRegistry sessions,
             ConfigSnapshot config,
+            LangService lang,
             EffectGuiPagePopulator populator,
             List<KillEffect> visibleEffects,
             int totalInCategory,
@@ -36,12 +38,13 @@ public final class GuiWindowBridge {
         Objects.requireNonNull(session, "session");
         Objects.requireNonNull(sessions, "sessions");
         Objects.requireNonNull(config, "config");
+        Objects.requireNonNull(lang, "lang");
         Objects.requireNonNull(populator, "populator");
         Objects.requireNonNull(layout, "layout");
         Objects.requireNonNull(onClose, "onClose");
         sessions.put(session);
 
-        String title = GuiTitleCompat.fusedTitle(config, session.category());
+        String title = GuiTitleCompat.fusedTitle(config, lang, player, session.category());
 
         Consumer<GuiChestSlotWriter> populate = writer -> populator.populateTop(
                 session,

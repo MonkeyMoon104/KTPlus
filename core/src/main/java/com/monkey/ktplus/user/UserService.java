@@ -46,6 +46,14 @@ public final class UserService implements UserSelectionWriter {
         notifySelectionChanged(uuid, null);
     }
 
+    public java.util.List<UUID> clearSelectedEffectId(String effectId) {
+        java.util.List<UUID> cleared = repository.clearSelectedEffectId(effectId);
+        for (UUID uuid : cleared) {
+            notifySelectionChanged(uuid, null);
+        }
+        return cleared;
+    }
+
     public void clearCache() {
         repository.clearCache();
     }

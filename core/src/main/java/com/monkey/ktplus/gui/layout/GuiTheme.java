@@ -2,11 +2,13 @@ package com.monkey.ktplus.gui.layout;
 
 import com.monkey.ktplus.config.ConfigSnapshot;
 import com.monkey.ktplus.effects.api.CategoryDefinition;
+import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.util.compat.MaterialResolver;
 import com.monkey.ktplus.util.text.TextFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import com.monkey.ktplus.gui.effect.EffectGuiSortMode;
@@ -22,16 +24,19 @@ public final class GuiTheme {
         return namedGlass(config.guiEmptyEffectMaterial(), config.guiEmptyEffectName());
     }
 
-    public static ItemStack scrollArrow(ConfigSnapshot config, String buttonKey, boolean enabled) {
+    public static ItemStack scrollArrow(
+            ConfigSnapshot config, LangService lang, Player player, String buttonKey, boolean enabled) {
         String materialKey = config.guiButtonMaterial(buttonKey, "ARROW");
         Material material = MaterialResolver.resolve(
                 enabled ? materialKey : "GRAY_STAINED_GLASS_PANE", materialKey);
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
+            String enabledKey = "buttons." + buttonKey + ".name";
+            String disabledKey = "buttons." + buttonKey + "-disabled.name";
             String label = enabled
-                    ? config.guiButtonName(buttonKey, "&eScroll")
-                    : config.guiButtonNameDisabled(buttonKey, "&8Scroll");
+                    ? lang.guiText(player, enabledKey, config.guiButtonName(buttonKey, "&eScroll"))
+                    : lang.guiText(player, disabledKey, config.guiButtonNameDisabled(buttonKey, "&8Scroll"));
             meta.displayName(TextFormatter.component(label));
             item.setItemMeta(meta);
         }
@@ -48,26 +53,31 @@ public final class GuiTheme {
         return item;
     }
 
-    public static ItemStack filterHopper(ConfigSnapshot config, EffectGuiSortMode mode) {
+    public static ItemStack filterHopper(
+            ConfigSnapshot config, LangService lang, Player player, EffectGuiSortMode mode) {
         ItemStack item = new ItemStack(MaterialResolver.resolve(config.guiButtonMaterial("filter", "HOPPER"), "HOPPER"));
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            String modeLabel = config.guiFilterModeLabel(mode.name(), mode.shortLabel());
-            String title = config.guiButtonName("filter", "&6Filter &8| {mode}").replace("{mode}", modeLabel);
+            String modeLabel = lang.guiText(
+                    player, "texts.filter-modes." + mode.name(), config.guiFilterModeLabel(mode.name(), mode.shortLabel()));
+            String title = lang.guiText(player, "buttons.filter.name", config.guiButtonName("filter", "&6Filter &8| {mode}"))
+                    .replace("{mode}", modeLabel);
             meta.displayName(TextFormatter.component(title));
 
             List<String> configuredLore = config.guiButtonLore("filter");
+            List<String> langLore = lang.guiTextList(player, "button-lore.filter", List.of());
             List<String> lore = new ArrayList<>();
-            if (configuredLore.isEmpty()) {
+            List<String> source = !configuredLore.isEmpty() ? configuredLore : langLore;
+            if (source.isEmpty()) {
                 lore.add(TextFormatter.color("&7Sort for &fthis category &7only"));
                 lore.add(TextFormatter.color("&eLeft-click &7next option"));
                 lore.add(TextFormatter.color("&eRight-click &7previous option"));
                 lore.add(TextFormatter.color("&8"));
-                appendModeLines(config, mode, lore);
+                appendModeLines(config, lang, player, mode, lore);
             } else {
-                for (String line : configuredLore) {
+                for (String line : source) {
                     if ("{modes}".equals(line)) {
-                        appendModeLines(config, mode, lore);
+                        appendModeLines(config, lang, player, mode, lore);
                     } else {
                         lore.add(TextFormatter.color(line.replace("{mode}", modeLabel)));
                     }
@@ -79,11 +89,15 @@ public final class GuiTheme {
         return item;
     }
 
-    private static void appendModeLines(ConfigSnapshot config, EffectGuiSortMode active, List<String> lore) {
-        String activeTpl = config.guiText("filter-mode-active", "&a▶ {label}");
-        String inactiveTpl = config.guiText("filter-mode-inactive", "&8  {label}");
+    private static void appendModeLines(
+            ConfigSnapshot config, LangService lang, Player player, EffectGuiSortMode active, List<String> lore) {
+        String activeTpl = lang.guiText(player, "texts.filter-mode-active", "&a▶ {label}");
+        String inactiveTpl = lang.guiText(player, "texts.filter-mode-inactive", "&8  {label}");
         for (EffectGuiSortMode option : EffectGuiSortMode.values()) {
-            String label = stripColor(config.guiFilterModeLabel(option.name(), option.shortLabel()));
+            String label = stripColor(lang.guiText(
+                    player,
+                    "texts.filter-modes." + option.name(),
+                    config.guiFilterModeLabel(option.name(), option.shortLabel())));
             String template = option == active ? activeTpl : inactiveTpl;
             lore.add(TextFormatter.color(template.replace("{label}", label)));
         }

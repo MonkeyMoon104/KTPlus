@@ -5,7 +5,9 @@ import com.monkey.ktplus.access.effect.EffectSelectionService;
 import com.monkey.ktplus.access.platform.InvuiAccess;
 import com.monkey.ktplus.access.platform.PlatformAccess;
 import com.monkey.ktplus.bridge.VersionBridge;
+import com.monkey.ktplus.command.lamp.DisabledEffectIdSuggestions;
 import com.monkey.ktplus.command.lamp.EffectIdSuggestions;
+import com.monkey.ktplus.command.lamp.EnabledEffectIdSuggestions;
 import com.monkey.ktplus.common.gui.GuiBackend;
 import com.monkey.ktplus.common.platform.PlatformCapability;
 import com.monkey.ktplus.config.ConfigManager;
@@ -16,6 +18,7 @@ import com.monkey.ktplus.economy.EconomyProviderType;
 import com.monkey.ktplus.economy.EconomyService;
 import com.monkey.ktplus.economy.balance.BalanceProvider;
 import com.monkey.ktplus.economy.balance.BalanceProviderFactory;
+import com.monkey.ktplus.effects.availability.EffectAvailabilityService;
 import com.monkey.ktplus.effects.condition.EffectConditionService;
 import com.monkey.ktplus.effects.custom.CustomEffectLoader;
 import com.monkey.ktplus.effects.list.headcollector.HeadCollectorService;
@@ -30,6 +33,7 @@ import com.monkey.ktplus.gui.inventory.PendingInventoryRepository;
 import com.monkey.ktplus.gui.inventory.PlayerInventoryGuard;
 import com.monkey.ktplus.hook.HookManager;
 import com.monkey.ktplus.hook.worldguard.WorldGuardHook;
+import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.listener.resourcepack.ResourcePackJoinListener;
 import com.monkey.ktplus.logging.BootLogger;
 import com.monkey.ktplus.logging.EffectBootReport;
@@ -87,6 +91,8 @@ public final class PluginBootstrap {
     private CooldownService cooldowns;
     private RandomEventService randomEvents;
     private EffectConditionService conditions;
+    private EffectAvailabilityService availability;
+    private LangService lang;
     private ResourcePackJoinListener resourcePackJoinListener;
     private @Nullable ReviewRewardService reviews;
 
@@ -101,9 +107,13 @@ public final class PluginBootstrap {
             configManager = new ConfigManager(plugin);
             config = configManager.load();
             new ConfigIntegrityChecker(plugin).validate();
+            lang = new LangService(plugin);
+            lang.bindConfig(config);
+            availability = new EffectAvailabilityService(plugin);
             boot.detail(
                     "Config",
-                    "Files loaded -> main/messages/effects/economy/gui/database/events/resourcepack/performance");
+                    "Files loaded -> main/messages/effects/economy/gui/database/events/resourcepack/performance/lang");
+            boot.detail("Config", "Default language -> " + lang.defaultLanguage());
             boot.detail(
                     "Config",
                     "Economy -> enabled="
@@ -245,6 +255,7 @@ public final class PluginBootstrap {
             boot.beginPhase(7, "GUI", "GUI, commands and listeners");
             runtime = new EffectRuntime(
                     config,
+                    lang,
                     scheduler,
                     taskRegistry,
                     temporaryBlocks,
@@ -253,6 +264,8 @@ public final class PluginBootstrap {
             gui = new EffectGuiService(
                     config,
                     registry,
+                    availability,
+                    lang,
                     users,
                     economy,
                     access,
@@ -296,6 +309,8 @@ public final class PluginBootstrap {
             taskRegistry.cancelAll();
         }
         EffectIdSuggestions.clear();
+        EnabledEffectIdSuggestions.clear();
+        DisabledEffectIdSuggestions.clear();
         if (headCollector != null) {
             headCollector.shutdown();
         }
@@ -334,7 +349,9 @@ public final class PluginBootstrap {
                 conditions,
                 randomEvents,
                 resourcePackJoinListener,
-                reviews);
+                reviews,
+                availability,
+                lang);
     }
 
     private WorldGuardHook.BlockChangeMode worldGuardMode() {
@@ -384,6 +401,14 @@ public final class PluginBootstrap {
 
     public EffectConditionService conditions() {
         return conditions;
+    }
+
+    public EffectAvailabilityService availability() {
+        return availability;
+    }
+
+    public LangService lang() {
+        return lang;
     }
 
     public @Nullable HeadCollectorService headCollector() {

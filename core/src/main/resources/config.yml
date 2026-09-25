@@ -1,9 +1,12 @@
-config-version: "4.0.1"
+config-version: "4.0.2"
 
 disabled-worlds: []
 
 # When true: particles/sounds/displays only — no damage, blocks, potions, knockback, heals, combat spawns.
 cosmetic-mode: false
+
+# Fallback language pack code (EN, IT, ES, ...) when player locale is unknown.
+default-language: EN
 
 worldguard:
   block-changes: RESPECT
