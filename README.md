@@ -65,6 +65,7 @@ Everything around that is built for a real server: economy, storage, permissions
 <details>
 <summary><strong>For developers</strong></summary>
 
+- [Developer API](#developer-api)
 - [Build from source](#build-from-source)
 - [Project layout](#project-layout)
 - [Development](#development)
@@ -238,7 +239,7 @@ All files live under `plugins/KTPlus/`:
 
 | File | Purpose |
 |------|---------|
-| `config.yml` | Global options, worlds, `cosmetic-mode`, `default-language`, WorldGuard / LuckPerms, schematics |
+| `config.yml` | Global options, worlds, `cosmetic-mode`, `effects-on-mobs`, `default-language`, WorldGuard / LuckPerms, schematics |
 | `lang/` | Language packs (`EN.yml`, `IT.yml`, …) — messages, GUI chrome, effect names & descriptions |
 | `messages.yml` | Optional message overrides (any set key overrides lang for all players) |
 | `effects.yml` | Catalog — prices, categories, perks, damage |
@@ -281,6 +282,17 @@ cosmetic-mode: true
 ```
 
 When enabled, effects keep particles, sounds, and display entities, but skip damage, world blocks, potions, knockback, heals, fire ticks, and combat spawns. Random kill events in `events.yml` are separate — disable those too if you want a fully cosmetic setup.
+
+### Player kills only
+
+To stop kill effects on mobs (PvP-only spectacle), set:
+
+```yaml
+# config.yml
+effects-on-mobs: false
+```
+
+Default is `true`. Mob KillCoins rewards in `economy.yml` are unchanged.
 
 ---
 
@@ -403,6 +415,40 @@ Identifier: **`ktplus`**
 
 ---
 
+## Developer API
+
+Soft-depend on KTPlus and compile against the published `ktplus-api` artifact (same version as the plugin).
+
+```kotlin
+repositories {
+    maven("https://repo.monkeymoon104.it/release")
+}
+
+dependencies {
+    compileOnly("com.monkey.ktplus:ktplus-api:4.0.3")
+}
+```
+
+```java
+if (!KtPlusProvider.isAvailable()) {
+    return;
+}
+KtPlus api = KtPlusProvider.get();
+api.registration().register(
+    Effect.builder("my-effect")
+        .displayName("My Effect")
+        .icon(Material.NETHER_STAR)
+        .category(EffectCategory.EPIC)
+        .price(500)
+        .build(),
+    context -> { /* play visuals */ }
+);
+```
+
+Publish locally with `./gradlew :api:publish` (credentials: `monkeyrepo.user` / `monkeyrepo.secret` in your global `~/.gradle/gradle.properties`).
+
+---
+
 ## Build from source
 
 ```bash
@@ -420,12 +466,13 @@ gradlew.bat build      # Windows
 |------|---|
 | `./gradlew build` | Full build (includes `:dist`) |
 | `./gradlew test` | Unit tests (`:core:test`) |
+| `./gradlew :api:publish` | Publish `ktplus-api` to MonkeyRepo |
 | `./gradlew :dist:shadowJar` | Shaded plugin jar |
 | `./gradlew :dist:verifyPluginJar` | Relocations & library descriptors |
 
 Main/core compiles with **Java 21**. Paper **26.x** NMS modules use a **Java 25** toolchain.
 
-> Temporary patched **paperweight** and **Inventory Framework** builds live under `build-logic/repo` until upstream merges. Details: [`build-logic/repo/README.md`](build-logic/repo/README.md).
+> Temporary patched **Inventory Framework** build lives under `build-logic/repo` until upstream releases the AIOOBE fix. **paperweight** uses upstream `2.0.0-beta.24`. Details: [`build-logic/repo/README.md`](build-logic/repo/README.md).
 
 ---
 
@@ -434,6 +481,7 @@ Main/core compiles with **Java 21**. Paper **26.x** NMS modules use a **Java 25*
 ```text
 KTPlus/
 ├── build-logic/     Gradle conventions + vendor Maven repo
+├── api/             Public developer API (ServicesManager + events)
 ├── common/          Shared contracts
 ├── nms-bridge/      Version → NMS mapping
 ├── NMS/             v1_21_* (reobf) · v26_* (Mojmap)
@@ -458,8 +506,8 @@ KTPlus/
 
 | Library | Issue | Status |
 |---------|-------|--------|
-| paperweight-userdev | Gradle 10 `by registering` deprecation | Vendored · [PR #405](https://github.com/PaperMC/paperweight/pull/405) |
-| Inventory Framework 0.12.1 | AIOOBE in `processMethodAnnotations` | Vendored · [PR #2553](https://github.com/stefvanschie/IF/pull/2553) |
+| paperweight-userdev | Gradle 10 `by registering` deprecation | Upstream `2.0.0-beta.24` |
+| Inventory Framework 0.12.1 | AIOOBE in `processMethodAnnotations` | Vendored · fix in [PR #2549](https://github.com/stefvanschie/IF/pull/2549) (awaiting release) |
 
 ---
 
@@ -497,6 +545,6 @@ Copyright © 2026 MonkeyMoon104
 
 <br/>
 
-<sub>Built by MonkeyMoon104 — Paper, Inventory Framework, PacketEvents, Flyway, OkHttp, Lamp, Configurate.</sub>
+<sub>Built by MonkeyMoon104</sub>
 
 </div>
