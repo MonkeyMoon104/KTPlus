@@ -24,12 +24,14 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -150,6 +152,50 @@ public final class EffectGuiService {
             sortPreferences.remove(player.getUniqueId());
             inventoryGuard.restore(player);
         }
+    }
+
+    public void handleDeath(PlayerDeathEvent event) {
+        Objects.requireNonNull(event, "event");
+        Player player = event.getEntity();
+        UUID playerId = player.getUniqueId();
+        GuiSession session = sessions.get(player).orElse(null);
+        PlayerInventorySnapshot snapshot =
+                session != null ? session.inventorySnapshot() : null;
+        Optional<PlayerInventorySnapshot> taken = inventoryGuard.take(player);
+        if (snapshot == null) {
+            snapshot = taken.orElse(null);
+        }
+        if (session == null && snapshot == null) {
+            return;
+        }
+
+        suppressCloseRestore.add(playerId);
+        sessions.remove(player);
+        windowHandles.remove(playerId);
+        sortPreferences.remove(playerId);
+        try {
+            player.closeInventory();
+        } catch (RuntimeException ignored) {
+        }
+
+        if (snapshot == null) {
+            scheduleUnsuppress(playerId);
+            return;
+        }
+
+        event.getDrops().clear();
+        if (event.getKeepInventory()) {
+            snapshot.apply(player);
+        } else {
+            snapshot.addToDrops(event.getDrops());
+            player.getInventory().clear();
+        }
+        scheduleUnsuppress(playerId);
+    }
+
+    private void scheduleUnsuppress(UUID playerId) {
+        JavaPlugin plugin = JavaPlugin.getProvidingPlugin(EffectGuiService.class);
+        Bukkit.getScheduler().runTask(plugin, () -> suppressCloseRestore.remove(playerId));
     }
 
     public void handle(Player player, GuiAction action) {

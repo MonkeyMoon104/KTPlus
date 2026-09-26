@@ -1,10 +1,13 @@
 package com.monkey.ktplus.user;
 
 import com.monkey.ktplus.access.effect.UserSelectionWriter;
+import com.monkey.ktplus.api.bridge.ApiEvents;
+import com.monkey.ktplus.api.event.EffectClearEvent;
 import com.monkey.ktplus.storage.repository.PlayerEffectRepository;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.Nullable;
 
@@ -42,13 +45,16 @@ public final class UserService implements UserSelectionWriter {
     }
 
     public void clearEffect(UUID uuid) {
+        String previous = repository.selectedEffect(uuid).orElse(null);
         repository.clearSelectedEffect(uuid);
         notifySelectionChanged(uuid, null);
+        ApiEvents.call(new EffectClearEvent(uuid, onlinePlayer(uuid), previous));
     }
 
     public java.util.List<UUID> clearSelectedEffectId(String effectId) {
         java.util.List<UUID> cleared = repository.clearSelectedEffectId(effectId);
         for (UUID uuid : cleared) {
+            ApiEvents.call(new EffectClearEvent(uuid, onlinePlayer(uuid), effectId));
             notifySelectionChanged(uuid, null);
         }
         return cleared;
@@ -56,6 +62,13 @@ public final class UserService implements UserSelectionWriter {
 
     public void clearCache() {
         repository.clearCache();
+    }
+
+    private static @Nullable Player onlinePlayer(UUID uuid) {
+        if (Bukkit.getServer() == null) {
+            return null;
+        }
+        return Bukkit.getPlayer(uuid);
     }
 
     private void notifySelectionChanged(UUID uuid, @Nullable String effectId) {

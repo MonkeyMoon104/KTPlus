@@ -59,6 +59,10 @@ public final class EffectDefinition {
         return IconItemStacks.create(icon, iconKey);
     }
 
+    public @Nullable String iconKey() {
+        return iconKey;
+    }
+
     public EffectCategory category() {
         return category;
     }

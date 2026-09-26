@@ -7,6 +7,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class CooldownService {
+    public static final String EFFECT_KEY = "effect";
+
     private final Map<String, Long> cooldowns = new ConcurrentHashMap<>();
 
     public boolean ready(UUID uuid, String key) {
@@ -42,6 +44,21 @@ public final class CooldownService {
         Objects.requireNonNull(uuid, "uuid");
         Objects.requireNonNull(key, "key");
         cooldowns.remove(cacheKey(uuid, key));
+    }
+
+    public long remainingMillis(UUID uuid, String key) {
+        Objects.requireNonNull(uuid, "uuid");
+        Objects.requireNonNull(key, "key");
+        Long until = cooldowns.get(cacheKey(uuid, key));
+        if (until == null) {
+            return 0L;
+        }
+        long remaining = until - System.currentTimeMillis();
+        if (remaining <= 0L) {
+            cooldowns.remove(cacheKey(uuid, key), until);
+            return 0L;
+        }
+        return remaining;
     }
 
     public void pruneExpired() {

@@ -1,9 +1,12 @@
-config-version: "4.0.2"
+config-version: "${version}"
 
 disabled-worlds: []
 
 # When true: particles/sounds/displays only — no damage, blocks, potions, knockback, heals, combat spawns.
 cosmetic-mode: false
+
+# When false: kill effects only play on player kills (mob KillCoins rewards still use economy.yml).
+effects-on-mobs: true
 
 # Fallback language pack code (EN, IT, ES, ...) when player locale is unknown.
 default-language: EN

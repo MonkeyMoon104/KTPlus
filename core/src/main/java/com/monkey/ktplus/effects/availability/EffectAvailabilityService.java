@@ -1,5 +1,6 @@
 package com.monkey.ktplus.effects.availability;
 
+import com.monkey.ktplus.api.bridge.ApiEvents;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public final class EffectAvailabilityService {
             return DisableResult.ALREADY_DISABLED;
         }
         save();
+        ApiEvents.call(new com.monkey.ktplus.api.event.EffectAvailabilityChangeEvent(id, false));
         return DisableResult.DISABLED;
     }
 
@@ -100,6 +102,7 @@ public final class EffectAvailabilityService {
             return EnableResult.ALREADY_ENABLED;
         }
         save();
+        ApiEvents.call(new com.monkey.ktplus.api.event.EffectAvailabilityChangeEvent(id, true));
         return EnableResult.ENABLED;
     }
 

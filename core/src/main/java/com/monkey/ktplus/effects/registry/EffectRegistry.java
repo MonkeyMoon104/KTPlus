@@ -34,6 +34,17 @@ public final class EffectRegistry {
         return Optional.ofNullable(effects.get(id));
     }
 
+    public boolean unregister(String idOrAlias) {
+        String key = normalize(idOrAlias);
+        String id = aliases.getOrDefault(key, key);
+        KillEffect removed = effects.remove(id);
+        if (removed == null) {
+            return false;
+        }
+        aliases.entrySet().removeIf(entry -> entry.getValue().equals(id));
+        return true;
+    }
+
     public Collection<KillEffect> all() {
         return new ArrayList<>(effects.values());
     }

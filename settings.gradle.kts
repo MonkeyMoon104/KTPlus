@@ -1,10 +1,6 @@
 pluginManagement {
     includeBuild("build-logic")
     repositories {
-        maven {
-            name = "ktplus-paperweight-patch"
-            url = uri("build-logic/repo")
-        }
         gradlePluginPortal()
         maven("https://repo.papermc.io/repository/maven-public/")
     }
@@ -17,6 +13,7 @@ plugins {
 rootProject.name = "KTPlus"
 
 include("common")
+include("api")
 include("nms-bridge")
 include("core")
 include("dist")

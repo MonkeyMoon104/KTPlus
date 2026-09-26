@@ -1,9 +1,7 @@
 package com.monkey.ktplus.listener;
 
 import com.monkey.ktplus.bootstrap.PluginBootstrap;
-import com.monkey.ktplus.cooldown.CooldownService;
 import com.monkey.ktplus.effects.api.KillEffect;
-import java.time.Duration;
 import java.util.Objects;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -13,11 +11,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 public final class KillListener implements Listener {
     private final PluginBootstrap bootstrap;
-    private final CooldownService cooldowns;
 
-    public KillListener(PluginBootstrap bootstrap, CooldownService cooldowns) {
+    public KillListener(PluginBootstrap bootstrap) {
         this.bootstrap = Objects.requireNonNull(bootstrap, "bootstrap");
-        this.cooldowns = Objects.requireNonNull(cooldowns, "cooldowns");
     }
 
     @EventHandler
@@ -26,14 +22,8 @@ public final class KillListener implements Listener {
         if (killer == null) {
             return;
         }
-        if (!bootstrap.conditions().allowsWorld(killer) || !bootstrap.conditions().allowsGameMode(killer)) {
-            return;
-        }
         Entity victim = event.getEntity();
         bootstrap.economy().reward(killer, victim instanceof Player);
-        if (!cooldowns.ready(killer.getUniqueId(), "effect")) {
-            return;
-        }
         String selected = bootstrap.users().selectedEffect(killer).orElse(null);
         if (selected == null) {
             return;
@@ -42,20 +32,6 @@ public final class KillListener implements Listener {
         if (effect == null) {
             return;
         }
-        if (!bootstrap.availability().isEnabled(effect.definition().id())) {
-            return;
-        }
-        if (!bootstrap.conditions().allowsTrigger(killer, effect.definition())) {
-            return;
-        }
-        if (!bootstrap.access().canActivate(killer, effect.definition())) {
-            return;
-        }
-        cooldowns.set(killer.getUniqueId(), "effect", Duration.ofMillis(bootstrap.config().effectCooldownMillis()));
-        if (!bootstrap.runtime().start(killer, victim, victim.getLocation(), effect)) {
-            cooldowns.clearKey(killer.getUniqueId(), "effect");
-            return;
-        }
-        bootstrap.randomEvents().tryTrigger(killer, victim.getLocation());
+        bootstrap.playPipeline().playGated(killer, victim, victim.getLocation(), effect);
     }
 }

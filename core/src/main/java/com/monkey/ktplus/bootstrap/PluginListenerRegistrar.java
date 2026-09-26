@@ -55,7 +55,7 @@ public final class PluginListenerRegistrar {
                 new ResourcePackJoinListener(new ResourcePackService(plugin, config));
         manager.registerEvents(new GuiListener(gui), plugin);
         manager.registerEvents(new PlayerInventoryGuardListener(gui), plugin);
-        manager.registerEvents(new KillListener(bootstrap, cooldowns), plugin);
+        manager.registerEvents(new KillListener(bootstrap), plugin);
         manager.registerEvents(new LifecycleListener(runtime, gui, temporaryBlocks, cooldowns), plugin);
         manager.registerEvents(new TemporaryBlockProtectionListener(temporaryBlocks), plugin);
         manager.registerEvents(new EffectSkeletonGuardListener(), plugin);

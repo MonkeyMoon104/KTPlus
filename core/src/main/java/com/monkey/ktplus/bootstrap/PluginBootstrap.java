@@ -4,6 +4,9 @@ import com.monkey.ktplus.access.effect.EffectAccessService;
 import com.monkey.ktplus.access.effect.EffectSelectionService;
 import com.monkey.ktplus.access.platform.InvuiAccess;
 import com.monkey.ktplus.access.platform.PlatformAccess;
+import com.monkey.ktplus.api.KtPlus;
+import com.monkey.ktplus.api.KtPlusProvider;
+import com.monkey.ktplus.api.bridge.KtPlusApiFacade;
 import com.monkey.ktplus.bridge.VersionBridge;
 import com.monkey.ktplus.command.lamp.DisabledEffectIdSuggestions;
 import com.monkey.ktplus.command.lamp.EffectIdSuggestions;
@@ -24,6 +27,7 @@ import com.monkey.ktplus.effects.custom.CustomEffectLoader;
 import com.monkey.ktplus.effects.list.headcollector.HeadCollectorService;
 import com.monkey.ktplus.effects.registry.BuiltInEffectRegistrar;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
+import com.monkey.ktplus.effects.runtime.EffectPlayPipeline;
 import com.monkey.ktplus.effects.runtime.EffectRuntime;
 import com.monkey.ktplus.effects.runtime.block.TemporaryBlockService;
 import com.monkey.ktplus.effects.visual.VisualEffectService;
@@ -95,6 +99,8 @@ public final class PluginBootstrap {
     private LangService lang;
     private ResourcePackJoinListener resourcePackJoinListener;
     private @Nullable ReviewRewardService reviews;
+    private @Nullable KtPlusApiFacade api;
+    private EffectPlayPipeline playPipeline;
 
     public PluginBootstrap(JavaPlugin plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
@@ -274,6 +280,8 @@ public final class PluginBootstrap {
                     guiBackend,
                     onceLogger);
             randomEvents = new RandomEventService(config, economy, visuals);
+            playPipeline = new EffectPlayPipeline(
+                    config, conditions, availability, access, cooldowns, runtime, randomEvents);
             reviews = new ReviewRewardService(
                     plugin, scheduler, new ReviewClaimRepository(database), economy, config);
             PluginCommandRegistrar.register(plugin, this);
@@ -286,7 +294,10 @@ public final class PluginBootstrap {
 
             boot.beginPhase(8, "Boot", "Finalize");
             PluginPostEnableTasks.run(plugin, config.main(), scheduler, onceLogger, registry, boot);
-            boot.detail("Boot", "Post-enable -> bStats, update-check, effect catalog export");
+            api = new KtPlusApiFacade(plugin, this, playPipeline);
+            KtPlusProvider.register(api);
+            plugin.getServer().getServicesManager().register(KtPlus.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
+            boot.detail("Boot", "Post-enable -> bStats, update-check, effect catalog export, API");
             boot.completePhase("ready");
 
             boot.complete();
@@ -298,6 +309,11 @@ public final class PluginBootstrap {
     }
 
     public void disable() {
+        if (api != null) {
+            plugin.getServer().getServicesManager().unregister(KtPlus.class, api);
+            KtPlusProvider.unregister(api);
+            api = null;
+        }
         if (runtime != null) {
             runtime.cancelAll(CancellationReason.PLUGIN_DISABLE);
             runtime.entityRegistry().clear();
@@ -352,6 +368,12 @@ public final class PluginBootstrap {
                 reviews,
                 availability,
                 lang);
+        playPipeline = new EffectPlayPipeline(
+                config, conditions, availability, access, cooldowns, runtime, randomEvents);
+        if (api != null) {
+            api.reload(config, playPipeline);
+            api.reloadReviews(reviews);
+        }
     }
 
     private WorldGuardHook.BlockChangeMode worldGuardMode() {
@@ -401,6 +423,18 @@ public final class PluginBootstrap {
 
     public EffectConditionService conditions() {
         return conditions;
+    }
+
+    public CooldownService cooldowns() {
+        return cooldowns;
+    }
+
+    public HookManager hooks() {
+        return hooks;
+    }
+
+    public EffectPlayPipeline playPipeline() {
+        return playPipeline;
     }
 
     public EffectAvailabilityService availability() {

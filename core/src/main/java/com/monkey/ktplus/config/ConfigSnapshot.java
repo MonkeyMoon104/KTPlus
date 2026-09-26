@@ -189,6 +189,10 @@ public final class ConfigSnapshot {
         return main.getBoolean("cosmetic-mode", false);
     }
 
+    public boolean effectsOnMobs() {
+        return main.getBoolean("effects-on-mobs", true);
+    }
+
     public int maxSessionsPerPlayer() {
         return Math.max(1, performance.getInt("max-active-sessions-per-player", 2));
     }

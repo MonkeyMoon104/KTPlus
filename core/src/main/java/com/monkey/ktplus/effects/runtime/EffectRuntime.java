@@ -142,6 +142,37 @@ public final class EffectRuntime {
         heavySessions.set(0);
     }
 
+    public int sessionCount(UUID playerId) {
+        Objects.requireNonNull(playerId, "playerId");
+        Set<UUID> ids = sessionsByPlayer.get(playerId);
+        return ids == null ? 0 : ids.size();
+    }
+
+    public int heavySessionCount() {
+        return heavySessions.get();
+    }
+
+    public java.util.Optional<EffectSession> session(UUID sessionId) {
+        Objects.requireNonNull(sessionId, "sessionId");
+        return java.util.Optional.ofNullable(sessions.get(sessionId));
+    }
+
+    public java.util.Collection<EffectSession> sessionsFor(UUID playerId) {
+        Objects.requireNonNull(playerId, "playerId");
+        Set<UUID> ids = sessionsByPlayer.get(playerId);
+        if (ids == null || ids.isEmpty()) {
+            return java.util.List.of();
+        }
+        java.util.ArrayList<EffectSession> result = new java.util.ArrayList<>();
+        for (UUID id : ids) {
+            EffectSession session = sessions.get(id);
+            if (session != null) {
+                result.add(session);
+            }
+        }
+        return result;
+    }
+
     void handoffFireworksFinale(
             EffectSession session,
             VisualEffectService visuals,

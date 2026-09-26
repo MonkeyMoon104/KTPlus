@@ -156,6 +156,7 @@ val generateLibraryDescriptorsTask = tasks.register("generateLibraryDescriptors"
 }
 
 dependencies {
+    implementation(project(":api"))
     implementation(project(":nms-bridge"))
     compileOnly(libs.platform.paper.api)
     compileOnly(libs.lib.jspecify)
@@ -224,7 +225,7 @@ tasks.processResources {
         "okhttp" to libs.versions.lib.okhttp.get(),
     )
     inputs.properties(props)
-    filesMatching("plugin.yml") {
+    filesMatching(listOf("plugin.yml", "config.yml")) {
         expand(props)
     }
     from(libraryDescriptorDir) {
