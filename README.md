@@ -502,7 +502,7 @@ KTPlus/
 ## Development
 
 - Default branch: **`enhanced`** (force-push and deletion disabled)
-- Dependabot: weekly (Mon, Europe/Rome) on the Gradle catalog; vendored / Paper pins ignored — [`.github/dependabot.yml`](.github/dependabot.yml)
+- Dependabot: daily (08:00 Europe/Rome) on the Gradle catalog; vendored / Paper pins ignored — [`.github/dependabot.yml`](.github/dependabot.yml)
 
 | Library | Issue | Status |
 |---------|-------|--------|

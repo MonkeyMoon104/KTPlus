@@ -6,8 +6,7 @@ updates:
     directory: /
     target-branch: enhanced
     schedule:
-      interval: weekly
-      day: monday
+      interval: daily
       time: "08:00"
       timezone: Europe/Rome
     open-pull-requests-limit: 8
@@ -46,8 +45,7 @@ updates:
     directory: /
     target-branch: enhanced
     schedule:
-      interval: weekly
-      day: monday
+      interval: daily
       time: "08:00"
       timezone: Europe/Rome
     open-pull-requests-limit: 5
