@@ -2,7 +2,6 @@ package com.monkey.ktplus.listener.gui;
 
 import com.monkey.ktplus.gui.EffectGuiService;
 import java.util.Objects;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,11 +20,8 @@ public final class PlayerInventoryGuardListener implements Listener {
         gui.inventoryGuard().restorePending(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity();
-        if (gui.sessions().get(player).isPresent()) {
-            gui.finishSession(player, null);
-        }
+        gui.handleDeath(event);
     }
 }

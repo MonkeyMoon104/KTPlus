@@ -1,7 +1,9 @@
 package com.monkey.ktplus.gui.inventory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -55,6 +57,27 @@ public final class PlayerInventorySnapshot {
 
     public @Nullable ItemStack offhand() {
         return cloneItem(offhand);
+    }
+
+    public void addToDrops(List<ItemStack> drops) {
+        Objects.requireNonNull(drops, "drops");
+        appendDroppable(drops, storage);
+        appendDroppable(drops, armor);
+        if (isDroppable(offhand)) {
+            drops.add(cloneItem(offhand));
+        }
+    }
+
+    private static void appendDroppable(List<ItemStack> drops, ItemStack[] items) {
+        for (ItemStack item : items) {
+            if (isDroppable(item)) {
+                drops.add(cloneItem(item));
+            }
+        }
+    }
+
+    private static boolean isDroppable(@Nullable ItemStack item) {
+        return item != null && item.getType() != Material.AIR && item.getAmount() > 0;
     }
 
     private static @Nullable ItemStack readOffhand(PlayerInventory inventory) {

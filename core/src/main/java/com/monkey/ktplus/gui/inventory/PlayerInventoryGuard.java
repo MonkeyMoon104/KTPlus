@@ -36,6 +36,14 @@ public final class PlayerInventoryGuard {
         return Optional.ofNullable(active.get(player.getUniqueId()));
     }
 
+    public Optional<PlayerInventorySnapshot> take(Player player) {
+        Objects.requireNonNull(player, "player");
+        UUID playerId = player.getUniqueId();
+        PlayerInventorySnapshot snapshot = active.remove(playerId);
+        repository.delete(playerId);
+        return Optional.ofNullable(snapshot);
+    }
+
     public void restore(Player player) {
         Objects.requireNonNull(player, "player");
         UUID playerId = player.getUniqueId();
