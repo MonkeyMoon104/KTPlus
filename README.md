@@ -126,7 +126,7 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 
 ## Install
 
-1. Put `KTPlus-4.0.2.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
+1. Put `KTPlus-4.0.3.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
 2. Start once. Configs appear under `plugins/KTPlus/`.
 3. Edit what you need → `/kt reload` or restart.
 4. Upgrading from classic **KT**? Keep `plugins/KT/` (the SQLite files), run **only** KTPlus, then use [`/kt import-kt`](#commands).
@@ -460,7 +460,7 @@ git checkout enhanced
 gradlew.bat build      # Windows
 ```
 
-**Output:** `dist/build/libs/KTPlus-4.0.2.jar`
+**Output:** `dist/build/libs/KTPlus-4.0.3.jar`
 
 | Task | |
 |------|---|
