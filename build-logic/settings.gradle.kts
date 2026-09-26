@@ -2,15 +2,12 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
 dependencyResolutionManagement {
     repositories {
-        maven {
-            name = "ktplus-paperweight-patch"
-            url = uri(layout.rootDirectory.dir("repo"))
-        }
         gradlePluginPortal()
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")

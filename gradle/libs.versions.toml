@@ -1,5 +1,5 @@
 [versions]
-gradle-paperweight = "2.0.0-beta.23-ktplus.1"
+gradle-paperweight = "2.0.0-beta.24"
 gradle-shadow = "9.6.1"
 gradle-foojay-resolver = "1.0.0"
 platform-paper-api = "1.21.11-R0.1-SNAPSHOT"
