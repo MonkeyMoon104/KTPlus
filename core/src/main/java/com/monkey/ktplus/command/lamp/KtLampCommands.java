@@ -1,12 +1,14 @@
 package com.monkey.ktplus.command.lamp;
 
 import com.monkey.ktplus.command.KtCommandActions;
+import java.util.Objects;
+import org.bukkit.permissions.PermissionDefault;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.annotation.SuggestWith;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
-import java.util.Objects;
+import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 public final class KtLampCommands {
     private final KtCommandActions actions;
@@ -16,36 +18,43 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus")
+    @CommandPermission(value = "ktplus.use", defaultAccess = PermissionDefault.TRUE)
     public void rootKtPlus(BukkitCommandActor actor) {
         root(actor);
     }
 
     @Command("kt")
+    @CommandPermission(value = "ktplus.use", defaultAccess = PermissionDefault.TRUE)
     public void rootKt(BukkitCommandActor actor) {
         root(actor);
     }
 
     @Command("killeffect")
+    @CommandPermission(value = "ktplus.use", defaultAccess = PermissionDefault.TRUE)
     public void rootKillEffect(BukkitCommandActor actor) {
         root(actor);
     }
 
     @Command("ktplus reload")
+    @CommandPermission("ktplus.reload")
     public void reloadKtPlus(BukkitCommandActor actor) {
         actions.reload(actor.sender());
     }
 
     @Command("kt reload")
+    @CommandPermission("ktplus.reload")
     public void reloadKt(BukkitCommandActor actor) {
         actions.reload(actor.sender());
     }
 
     @Command("killeffect reload")
+    @CommandPermission("ktplus.reload")
     public void reloadKillEffect(BukkitCommandActor actor) {
         actions.reload(actor.sender());
     }
 
     @Command("ktplus set")
+    @CommandPermission(value = "ktplus.set", defaultAccess = PermissionDefault.TRUE)
     public void setKtPlus(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -54,6 +63,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt set")
+    @CommandPermission(value = "ktplus.set", defaultAccess = PermissionDefault.TRUE)
     public void setKt(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -62,6 +72,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect set")
+    @CommandPermission(value = "ktplus.set", defaultAccess = PermissionDefault.TRUE)
     public void setKillEffect(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -70,73 +81,86 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus clear")
+    @CommandPermission(value = "ktplus.clear", defaultAccess = PermissionDefault.TRUE)
     public void clearKtPlus(BukkitCommandActor actor, @Optional String playerName) {
         clear(actor, playerName);
     }
 
     @Command("kt clear")
+    @CommandPermission(value = "ktplus.clear", defaultAccess = PermissionDefault.TRUE)
     public void clearKt(BukkitCommandActor actor, @Optional String playerName) {
         clear(actor, playerName);
     }
 
     @Command("killeffect clear")
+    @CommandPermission(value = "ktplus.clear", defaultAccess = PermissionDefault.TRUE)
     public void clearKillEffect(BukkitCommandActor actor, @Optional String playerName) {
         clear(actor, playerName);
     }
 
     @Command("ktplus test")
+    @CommandPermission("ktplus.test")
     public void testKtPlus(BukkitCommandActor actor, @SuggestWith(EffectIdSuggestions.class) String effectId) {
         test(actor, effectId);
     }
 
     @Command("kt test")
+    @CommandPermission("ktplus.test")
     public void testKt(BukkitCommandActor actor, @SuggestWith(EffectIdSuggestions.class) String effectId) {
         test(actor, effectId);
     }
 
     @Command("killeffect test")
+    @CommandPermission("ktplus.test")
     public void testKillEffect(
             BukkitCommandActor actor, @SuggestWith(EffectIdSuggestions.class) String effectId) {
         test(actor, effectId);
     }
 
     @Command("ktplus disable")
+    @CommandPermission("ktplus.disable")
     public void disableKtPlus(
             BukkitCommandActor actor, @SuggestWith(EnabledEffectIdSuggestions.class) String effectId) {
         actions.disable(actor.sender(), effectId);
     }
 
     @Command("kt disable")
+    @CommandPermission("ktplus.disable")
     public void disableKt(
             BukkitCommandActor actor, @SuggestWith(EnabledEffectIdSuggestions.class) String effectId) {
         actions.disable(actor.sender(), effectId);
     }
 
     @Command("killeffect disable")
+    @CommandPermission("ktplus.disable")
     public void disableKillEffect(
             BukkitCommandActor actor, @SuggestWith(EnabledEffectIdSuggestions.class) String effectId) {
         actions.disable(actor.sender(), effectId);
     }
 
     @Command("ktplus enable")
+    @CommandPermission("ktplus.enable")
     public void enableKtPlus(
             BukkitCommandActor actor, @SuggestWith(DisabledEffectIdSuggestions.class) String effectId) {
         actions.enable(actor.sender(), effectId);
     }
 
     @Command("kt enable")
+    @CommandPermission("ktplus.enable")
     public void enableKt(
             BukkitCommandActor actor, @SuggestWith(DisabledEffectIdSuggestions.class) String effectId) {
         actions.enable(actor.sender(), effectId);
     }
 
     @Command("killeffect enable")
+    @CommandPermission("ktplus.enable")
     public void enableKillEffect(
             BukkitCommandActor actor, @SuggestWith(DisabledEffectIdSuggestions.class) String effectId) {
         actions.enable(actor.sender(), effectId);
     }
 
     @Command("ktplus grant")
+    @CommandPermission("ktplus.grant")
     public void grantKtPlus(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -145,6 +169,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt grant")
+    @CommandPermission("ktplus.grant")
     public void grantKt(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -153,6 +178,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect grant")
+    @CommandPermission("ktplus.grant")
     public void grantKillEffect(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -161,6 +187,7 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus revoke")
+    @CommandPermission("ktplus.revoke")
     public void revokeKtPlus(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -169,6 +196,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt revoke")
+    @CommandPermission("ktplus.revoke")
     public void revokeKt(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -177,6 +205,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect revoke")
+    @CommandPermission("ktplus.revoke")
     public void revokeKillEffect(
             BukkitCommandActor actor,
             @SuggestWith(EffectIdSuggestions.class) String effectId,
@@ -185,6 +214,7 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus killcoins")
+    @CommandPermission(value = "ktplus.killcoins", defaultAccess = PermissionDefault.TRUE)
     public void killCoinsKtPlus(
             BukkitCommandActor actor,
             @Suggest({"bal", "add", "take", "set", "reset"}) String action,
@@ -194,6 +224,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt killcoins")
+    @CommandPermission(value = "ktplus.killcoins", defaultAccess = PermissionDefault.TRUE)
     public void killCoinsKt(
             BukkitCommandActor actor,
             @Suggest({"bal", "add", "take", "set", "reset"}) String action,
@@ -203,6 +234,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect killcoins")
+    @CommandPermission(value = "ktplus.killcoins", defaultAccess = PermissionDefault.TRUE)
     public void killCoinsKillEffect(
             BukkitCommandActor actor,
             @Suggest({"bal", "add", "take", "set", "reset"}) String action,
@@ -212,6 +244,7 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus review")
+    @CommandPermission(value = "ktplus.use", defaultAccess = PermissionDefault.TRUE)
     public void reviewKtPlus(
             BukkitCommandActor actor,
             @Suggest({"github", "spigotmc"}) @Optional String target,
@@ -220,6 +253,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt review")
+    @CommandPermission(value = "ktplus.use", defaultAccess = PermissionDefault.TRUE)
     public void reviewKt(
             BukkitCommandActor actor,
             @Suggest({"github", "spigotmc"}) @Optional String target,
@@ -228,6 +262,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect review")
+    @CommandPermission(value = "ktplus.use", defaultAccess = PermissionDefault.TRUE)
     public void reviewKillEffect(
             BukkitCommandActor actor,
             @Suggest({"github", "spigotmc"}) @Optional String target,
@@ -236,6 +271,7 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus migrate")
+    @CommandPermission("ktplus.migrate")
     public void migrateKtPlus(
             BukkitCommandActor actor,
             @SuggestWith(MigrateTargetSuggestions.class) String target,
@@ -248,6 +284,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt migrate")
+    @CommandPermission("ktplus.migrate")
     public void migrateKt(
             BukkitCommandActor actor,
             @SuggestWith(MigrateTargetSuggestions.class) String target,
@@ -260,6 +297,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect migrate")
+    @CommandPermission("ktplus.migrate")
     public void migrateKillEffect(
             BukkitCommandActor actor,
             @SuggestWith(MigrateTargetSuggestions.class) String target,
@@ -272,6 +310,7 @@ public final class KtLampCommands {
     }
 
     @Command("ktplus import-kt")
+    @CommandPermission("ktplus.migrate")
     public void importKtPlus(
             BukkitCommandActor actor,
             @Suggest({"--dry-run", "--overwrite-balances"}) @Optional String a,
@@ -281,6 +320,7 @@ public final class KtLampCommands {
     }
 
     @Command("kt import-kt")
+    @CommandPermission("ktplus.migrate")
     public void importKt(
             BukkitCommandActor actor,
             @Suggest({"--dry-run", "--overwrite-balances"}) @Optional String a,
@@ -290,6 +330,7 @@ public final class KtLampCommands {
     }
 
     @Command("killeffect import-kt")
+    @CommandPermission("ktplus.migrate")
     public void importKillEffect(
             BukkitCommandActor actor,
             @Suggest({"--dry-run", "--overwrite-balances"}) @Optional String a,

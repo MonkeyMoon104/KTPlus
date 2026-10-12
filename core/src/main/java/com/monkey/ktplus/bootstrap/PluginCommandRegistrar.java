@@ -20,6 +20,7 @@ public final class PluginCommandRegistrar {
         KtCommand ktCommand = new KtCommand(actions);
         PluginCommand command = plugin.getCommand("ktplus");
         if (command != null) {
+            command.setPermission("ktplus.use");
             command.setExecutor(ktCommand);
             command.setTabCompleter(ktCommand);
         }

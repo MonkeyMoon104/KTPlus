@@ -12,7 +12,7 @@ class EffectPermissionDefaultsTest {
     }
 
     @Test
-    void paidEffectsDefaultFalse() {
-        assertEquals(PermissionDefault.FALSE, EffectPermissionDefaults.forPrice(100));
+    void paidEffectsDefaultTrue() {
+        assertEquals(PermissionDefault.TRUE, EffectPermissionDefaults.forPrice(100));
     }
 }

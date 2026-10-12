@@ -128,7 +128,7 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 
 ## Install
 
-1. Put `KTPlus-4.0.3.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
+1. Put `KTPlus-4.0.4.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
 2. Start once. Configs appear under `plugins/KTPlus/`.
 3. Edit what you need → `/kt reload` or restart.
 4. Upgrading from classic **KT**? Keep `plugins/KT/` (the SQLite files), run **only** KTPlus, then use [`/kt import-kt`](#commands).
@@ -219,8 +219,9 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 
 | Permission | Default | Description |
 |------------|---------|-------------|
+| `ktplus.use` | true | Open `/kt` GUI and player commands |
 | `ktplus.admin` | op | Admin access |
-| `ktplus.admin.bypass` | op | Bypass restrictions |
+| `ktplus.admin.bypass` | op | Bypass ownership / effect locks |
 | `ktplus.reload` | op | Reload |
 | `ktplus.migrate` | op | DB migration / classic KT import |
 | `ktplus.set` | true | Select own effect |
@@ -228,10 +229,12 @@ KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version:
 | `ktplus.clear` | true | Clear own effect |
 | `ktplus.clear.others` | op | Clear for others |
 | `ktplus.test` | op | Preview effects |
+| `ktplus.grant` | op | Grant effect unlock |
+| `ktplus.revoke` | op | Revoke effect unlock |
 | `ktplus.killcoins` | true | View balance |
 | `ktplus.killcoins.admin` | op | Edit balances |
 | `ktplus.worldguard.bypass` | op | Skip WorldGuard checks |
-| `ktplus.<effectId>.use` | — | Per-effect use |
+| `ktplus.<effectId>.use` | true | Per-effect use (deny in LP to rank-lock) |
 
 ---
 
@@ -427,7 +430,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.monkey.ktplus:ktplus-api:4.0.3")
+    compileOnly("com.monkey.ktplus:ktplus-api:4.0.4")
 }
 ```
 
@@ -462,7 +465,7 @@ git checkout enhanced
 gradlew.bat build      # Windows
 ```
 
-**Output:** `dist/build/libs/KTPlus-4.0.3.jar`
+**Output:** `dist/build/libs/KTPlus-4.0.4.jar`
 
 | Task | |
 |------|---|

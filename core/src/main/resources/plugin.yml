@@ -35,7 +35,12 @@ commands:
     aliases:
       - kt
       - killeffect
+    permission: ktplus.use
+    permission-message: You do not have permission to use KTPlus.
 permissions:
+  ktplus.use:
+    description: Open the KTPlus GUI and use player commands.
+    default: true
   ktplus.admin:
     default: op
   ktplus.admin.bypass:
