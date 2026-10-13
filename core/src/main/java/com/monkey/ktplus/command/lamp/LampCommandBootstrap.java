@@ -19,7 +19,10 @@ public final class LampCommandBootstrap {
             DisabledEffectIdSuggestions.bind(actions::disabledEffectIds);
             MigrateTargetSuggestions.bind(actions::migrateTargetSuggestions);
             BukkitLampConfig<BukkitCommandActor> config = BukkitLampConfig.createDefault(plugin);
-            BukkitLamp.builder(config).build().register(new KtLampCommands(actions));
+            BukkitLamp.builder(config)
+                    .exceptionHandler(new KtLampExceptionHandler(actions))
+                    .build()
+                    .register(new KtLampCommands(actions));
             plugin.getLogger().info("[Commands] Lamp command tree registered");
             return true;
         } catch (Throwable error) {

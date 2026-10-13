@@ -370,6 +370,11 @@ public final class KtCommandActions {
         return bootstrap.lang().message("player-not-found");
     }
 
+    public String noPermissionMessage(CommandSender sender) {
+        Objects.requireNonNull(sender, "sender");
+        return bootstrap.lang().message(sender, "no-permission");
+    }
+
     public void set(org.bukkit.command.CommandSender sender, org.bukkit.entity.Player target, String effectId) {
         if (!(sender instanceof org.bukkit.entity.Player player)) {
             sender.sendMessage(playerOnlyMessage());
