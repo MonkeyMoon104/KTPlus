@@ -12,16 +12,21 @@ import com.monkey.ktplus.effects.api.EffectDefinition;
 import com.monkey.ktplus.effects.api.KillEffect;
 import com.monkey.ktplus.effects.availability.EffectAvailabilityService;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
+import com.monkey.ktplus.effects.runtime.EffectRuntime;
 import com.monkey.ktplus.gui.inventory.PlayerInventoryGuard;
 import com.monkey.ktplus.gui.inventory.PlayerInventorySnapshot;
 import com.monkey.ktplus.lang.LangService;
 import com.monkey.ktplus.user.UserService;
 import com.monkey.ktplus.util.OnceLogger;
 import com.monkey.ktplus.util.text.TextFormatter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +42,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.Nullable;
 import com.monkey.ktplus.gui.action.GuiAction;
+import com.monkey.ktplus.gui.action.GuiClickFeedback;
 import com.monkey.ktplus.gui.backend.vanilla.VanillaInventoryHolder;
 import com.monkey.ktplus.gui.effect.EffectGuiPagePopulator;
 import com.monkey.ktplus.gui.effect.EffectGuiSortMode;
@@ -53,6 +59,12 @@ public final class EffectGuiService {
     private final Map<UUID, GuiWindowHandle> windowHandles = new ConcurrentHashMap<>();
     private final Map<UUID, EnumMap<EffectCategory, EffectGuiSortMode>> sortPreferences =
             new ConcurrentHashMap<>();
+    private final Map<UUID, Set<String>> favorites = new ConcurrentHashMap<>();
+    private final Map<UUID, Deque<String>> recentlyUsed = new ConcurrentHashMap<>();
+    private final Map<UUID, String> searchQueries = new ConcurrentHashMap<>();
+    private final Set<UUID> favoritesOnly = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> pendingSearch = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, EffectCategory> lastCategory = new ConcurrentHashMap<>();
     private final Set<UUID> suppressCloseRestore = ConcurrentHashMap.newKeySet();
     private final PlayerInventoryGuard inventoryGuard;
     private ConfigSnapshot config;
@@ -63,6 +75,7 @@ public final class EffectGuiService {
     private final EconomyService economyService;
     private final EffectAccessService accessService;
     private final EffectSelectionService selectionService;
+    private final EffectRuntime runtime;
     private final GuiBackend backend;
     private final OnceLogger onceLogger;
     private EffectGuiPagePopulator populator;
@@ -76,6 +89,7 @@ public final class EffectGuiService {
             EconomyService economyService,
             EffectAccessService accessService,
             EffectSelectionService selectionService,
+            EffectRuntime runtime,
             PlayerInventoryGuard inventoryGuard,
             GuiBackend backend,
             OnceLogger onceLogger) {
@@ -87,6 +101,7 @@ public final class EffectGuiService {
         this.economyService = Objects.requireNonNull(economyService, "economyService");
         this.accessService = Objects.requireNonNull(accessService, "accessService");
         this.selectionService = Objects.requireNonNull(selectionService, "selectionService");
+        this.runtime = Objects.requireNonNull(runtime, "runtime");
         this.inventoryGuard = Objects.requireNonNull(inventoryGuard, "inventoryGuard");
         this.backend = Objects.requireNonNull(backend, "backend");
         this.onceLogger = Objects.requireNonNull(onceLogger, "onceLogger");
@@ -151,6 +166,7 @@ public final class EffectGuiService {
             windowHandles.remove(player.getUniqueId());
             sortPreferences.remove(player.getUniqueId());
             inventoryGuard.restore(player);
+            GuiClickFeedback.close(player);
         }
     }
 
@@ -236,10 +252,30 @@ public final class EffectGuiService {
                     cycleFilter(player, action.category(), backward);
                 }
                 break;
+            case PREVIEW:
+                previewSelected(player);
+                break;
+            case SEARCH:
+                if (click != null && click.isRightClick()) {
+                    clearSearch(player);
+                } else {
+                    beginSearch(player);
+                }
+                break;
+            case FAVORITES:
+                toggleFavoritesOnly(player);
+                break;
             case EFFECT:
                 String effectId = action.effectId();
                 if (effectId != null && action.category() != null) {
-                    selectEffect(player, effectId, action.category(), action.scrollOffset());
+                    if (click != null && click.isShiftClick()) {
+                        previewEffect(player, effectId);
+                    } else if (click != null && click.isRightClick()) {
+                        toggleFavorite(player, effectId);
+                        refresh(player, action.category(), action.scrollOffset());
+                    } else {
+                        selectEffect(player, effectId, action.category(), action.scrollOffset());
+                    }
                 }
                 break;
         }
@@ -256,6 +292,7 @@ public final class EffectGuiService {
 
     private void open(Player player, EffectCategory category, int scrollOffset, boolean captureInventory) {
         Objects.requireNonNull(player, "player");
+        lastCategory.put(player.getUniqueId(), category);
         PlayerInventorySnapshot snapshot;
         if (captureInventory) {
             if (!inventoryGuard.begin(player)) {
@@ -319,7 +356,10 @@ public final class EffectGuiService {
                 category,
                 safeScroll,
                 sortMode,
-                previous.inventorySnapshot());
+                previous.inventorySnapshot(),
+                searchQueries.get(player.getUniqueId()),
+                favoritesOnly.contains(player.getUniqueId()),
+                favoriteIds(player));
         GuiWindowHandle window = windowHandles.get(player.getUniqueId());
         UUID playerId = player.getUniqueId();
         if (window != null) {
@@ -381,7 +421,15 @@ public final class EffectGuiService {
         GuiLayout layout = GuiLayout.of(config.guiRows(), config.guiCategorySlots());
         EffectGuiSortMode sortMode = sortMode(player, category);
         GuiSession session = new GuiSession(
-                UUID.randomUUID(), player.getUniqueId(), category, safeScroll, sortMode, snapshot);
+                UUID.randomUUID(),
+                player.getUniqueId(),
+                category,
+                safeScroll,
+                sortMode,
+                snapshot,
+                searchQueries.get(player.getUniqueId()),
+                favoritesOnly.contains(player.getUniqueId()),
+                favoriteIds(player));
         populator.populateBottomCategoryBar(session, player, layout, category);
         try {
             GuiOpenResult libraryResult = GuiWindowBridge.open(
@@ -399,6 +447,7 @@ public final class EffectGuiService {
                     this::finishSession);
             if (libraryResult.opened()) {
                 libraryResult.windowHandle().ifPresent(handle -> windowHandles.put(player.getUniqueId(), handle));
+                GuiClickFeedback.open(player);
                 return;
             }
             onceLogger.warnOnce(
@@ -406,6 +455,7 @@ public final class EffectGuiService {
                     "Library GUI unavailable; using vanilla inventory fallback",
                     libraryResult.failure());
             openVanilla(player, session, visibleEffects, categoryEffects.size(), safeScroll, layout);
+            GuiClickFeedback.open(player);
         } catch (RuntimeException failure) {
             finishSession(player, session.id());
             onceLogger.warnOnce("gui-open-failure", "GUI open failed", failure);
@@ -451,7 +501,137 @@ public final class EffectGuiService {
                 || outcome == EffectSelectionService.Outcome.DENIED_FUNDS) {
             return;
         }
+        rememberRecent(player, definition.id());
         refresh(player, category, scrollOffset);
+    }
+
+    private void previewSelected(Player player) {
+        Deque<String> recent = recentlyUsed.get(player.getUniqueId());
+        if (recent != null && !recent.isEmpty()) {
+            previewEffect(player, recent.peekFirst());
+            return;
+        }
+        Optional<String> selected = userService.selectedEffect(player);
+        if (selected.isPresent()) {
+            previewEffect(player, selected.get());
+            return;
+        }
+        player.sendMessage(lang.message(player, "gui-preview-none"));
+    }
+
+    public void previewEffect(Player player, String effectId) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(effectId, "effectId");
+        if (!player.hasPermission("ktplus.test") && !player.hasPermission("ktplus.admin")) {
+            player.sendMessage(lang.message(player, "no-permission"));
+            return;
+        }
+        KillEffect effect = registry.find(effectId).orElse(null);
+        if (effect == null || !availability.isEnabled(effect.definition().id())) {
+            player.sendMessage(lang.message(player, "unknown-effect").replace("%effect%", effectId));
+            return;
+        }
+        player.closeInventory();
+        boolean started = runtime.startPreview(player, effect);
+        if (started) {
+            rememberRecent(player, effect.definition().id());
+            player.sendMessage(lang.message(player, "effect-test-started")
+                    .replace("%effect%", effect.definition().displayName()));
+        } else {
+            player.sendMessage(lang.message(player, "effect-test-failed")
+                    .replace("%effect%", effect.definition().displayName()));
+        }
+    }
+
+    public boolean cancelPendingSearch(Player player) {
+        if (player == null || !pendingSearch.remove(player.getUniqueId())) {
+            return false;
+        }
+        player.sendMessage(lang.message(player, "gui-search-cleared"));
+        EffectCategory category = lastCategory.getOrDefault(player.getUniqueId(), EffectCategory.COMMON);
+        open(player, category, 0, true);
+        return true;
+    }
+
+    private void toggleFavorite(Player player, String effectId) {
+        String id = effectId.toLowerCase(Locale.ROOT);
+        Set<String> set = favorites.computeIfAbsent(player.getUniqueId(), ignored -> ConcurrentHashMap.newKeySet());
+        if (set.contains(id)) {
+            set.remove(id);
+            player.sendMessage(lang.message(player, "gui-favorite-removed").replace("%effect%", effectId));
+        } else {
+            set.add(id);
+            player.sendMessage(lang.message(player, "gui-favorite-added").replace("%effect%", effectId));
+        }
+    }
+
+    private void toggleFavoritesOnly(Player player) {
+        UUID id = player.getUniqueId();
+        if (favoritesOnly.contains(id)) {
+            favoritesOnly.remove(id);
+            player.sendMessage(lang.message(player, "gui-favorites-filter-off"));
+        } else {
+            favoritesOnly.add(id);
+            player.sendMessage(lang.message(player, "gui-favorites-filter-on"));
+        }
+        refresh(player, currentCategory(player), 0);
+    }
+
+    private void beginSearch(Player player) {
+        lastCategory.put(player.getUniqueId(), currentCategory(player));
+        pendingSearch.add(player.getUniqueId());
+        player.closeInventory();
+        player.sendMessage(lang.message(player, "gui-search-prompt"));
+    }
+
+    private void clearSearch(Player player) {
+        searchQueries.remove(player.getUniqueId());
+        pendingSearch.remove(player.getUniqueId());
+        player.sendMessage(lang.message(player, "gui-search-cleared"));
+        refresh(player, currentCategory(player), 0);
+    }
+
+    public boolean isPendingSearch(Player player) {
+        return player != null && pendingSearch.contains(player.getUniqueId());
+    }
+
+    public boolean consumeSearchInput(Player player, String raw) {
+        Objects.requireNonNull(player, "player");
+        if (!pendingSearch.remove(player.getUniqueId())) {
+            return false;
+        }
+        String query = raw == null ? "" : raw.trim();
+        if (query.equalsIgnoreCase("cancel")) {
+            searchQueries.remove(player.getUniqueId());
+            player.sendMessage(lang.message(player, "gui-search-cleared"));
+        } else if (query.isEmpty()) {
+            searchQueries.remove(player.getUniqueId());
+            player.sendMessage(lang.message(player, "gui-search-cleared"));
+        } else {
+            searchQueries.put(player.getUniqueId(), query);
+            player.sendMessage(lang.message(player, "gui-search-applied").replace("%query%", query));
+        }
+        EffectCategory category = lastCategory.getOrDefault(player.getUniqueId(), EffectCategory.COMMON);
+        open(player, category, 0, true);
+        return true;
+    }
+
+    private void rememberRecent(Player player, String effectId) {
+        Deque<String> recent =
+                recentlyUsed.computeIfAbsent(player.getUniqueId(), ignored -> new ArrayDeque<>());
+        recent.remove(effectId);
+        recent.addFirst(effectId);
+        while (recent.size() > 12) {
+            recent.removeLast();
+        }
+    }
+
+    private Set<String> favoriteIds(Player player) {
+        Set<String> set = favorites.get(player.getUniqueId());
+        if (set == null || set.isEmpty()) {
+            return Set.of();
+        }
+        return new HashSet<>(set);
     }
 
     public void refreshOpenSessions() {
@@ -470,11 +650,31 @@ public final class EffectGuiService {
 
     private List<KillEffect> effectsForCategory(Player player, EffectCategory category) {
         EffectGuiSortMode mode = sortMode(player, category);
+        Set<String> favs = favoriteIds(player);
+        boolean onlyFavorites = favoritesOnly.contains(player.getUniqueId());
+        String query = searchQueries.get(player.getUniqueId());
+        String queryLower = query == null ? null : query.toLowerCase(Locale.ROOT);
         return registry.all().stream()
                 .filter(effect -> effect.definition().category() == category)
                 .filter(effect -> availability.isEnabled(effect.definition().id()))
+                .filter(effect -> {
+                    if (!onlyFavorites) {
+                        return true;
+                    }
+                    return favs.contains(effect.definition().id().toLowerCase(Locale.ROOT));
+                })
+                .filter(effect -> matchesSearch(effect, queryLower))
                 .sorted(mode.comparator(player, accessService, economyService, userService))
                 .collect(Collectors.toList());
+    }
+
+    private boolean matchesSearch(KillEffect effect, @Nullable String queryLower) {
+        if (queryLower == null || queryLower.isEmpty()) {
+            return true;
+        }
+        EffectDefinition def = effect.definition();
+        return def.id().toLowerCase(Locale.ROOT).contains(queryLower)
+                || def.displayName().toLowerCase(Locale.ROOT).contains(queryLower);
     }
 
     private EffectGuiSortMode sortMode(Player player, EffectCategory category) {

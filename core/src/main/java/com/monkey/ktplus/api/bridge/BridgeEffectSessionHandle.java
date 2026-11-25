@@ -6,7 +6,13 @@ import com.monkey.ktplus.task.CancellationReason;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 public final class BridgeEffectSessionHandle implements EffectSessionHandle {
     private final EffectSession session;
@@ -63,6 +69,27 @@ public final class BridgeEffectSessionHandle implements EffectSessionHandle {
     @Override
     public void runTimer(long delayTicks, long periodTicks, BooleanSupplier action) {
         session.runTimer(delayTicks, periodTicks, action);
+    }
+
+    @Override
+    public @Nullable Entity spawnEntity(
+            String typeName, Location location, @Nullable Consumer<Entity> setup, long removeAfterTicks) {
+        return session.spawnEntity(typeName, location, setup, removeAfterTicks);
+    }
+
+    @Override
+    public void trackEntity(Entity entity) {
+        session.trackEntity(entity);
+    }
+
+    @Override
+    public boolean allowsWorldMutation(@Nullable Player actor, Location location) {
+        return session.allowsWorldMutation(actor, location);
+    }
+
+    @Override
+    public void placeTempBlock(@Nullable Player actor, Block block, Material material, long restoreDelayTicks) {
+        session.temporaryBlock(actor, block, material, restoreDelayTicks);
     }
 
     @Override

@@ -58,10 +58,17 @@ public final class GuiTheme {
         ItemStack item = new ItemStack(MaterialResolver.resolve(config.guiButtonMaterial("filter", "HOPPER"), "HOPPER"));
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            String modeLabel = lang.guiText(
-                    player, "texts.filter-modes." + mode.name(), config.guiFilterModeLabel(mode.name(), mode.shortLabel()));
-            String title = lang.guiText(player, "buttons.filter.name", config.guiButtonName("filter", "&6Filter &8| {mode}"))
-                    .replace("{mode}", modeLabel);
+            String modeLabel = stripColor(lang.guiText(
+                    player, "texts.filter-modes." + mode.name(), config.guiFilterModeLabel(mode.name(), mode.shortLabel())));
+            
+            String modeColored = (mode == EffectGuiSortMode.NONE ? "&c" : "&a") + modeLabel;
+            String titleTemplate = lang.guiText(
+                    player, "buttons.filter.name", config.guiButtonName("filter", "&6Filter &8| {mode}"));
+            
+            String title = titleTemplate.replace("{mode}", modeColored);
+            if (!title.contains(modeColored) && title.contains(modeLabel)) {
+                title = title.replace(modeLabel, modeColored);
+            }
             meta.displayName(TextFormatter.component(title));
 
             List<String> configuredLore = config.guiButtonLore("filter");

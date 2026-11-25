@@ -77,7 +77,7 @@ public final class KtCommandActions {
             player.sendMessage(bootstrap.lang().message(player, "unknown-effect").replace("%effect%", effectId));
             return;
         }
-        bootstrap.runtime().start(player, player, player.getLocation(), effect);
+        bootstrap.runtime().startPreview(player, effect);
     }
 
     public void disable(CommandSender sender, String effectId) {

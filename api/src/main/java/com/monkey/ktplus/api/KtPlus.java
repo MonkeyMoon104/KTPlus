@@ -16,6 +16,7 @@ import com.monkey.ktplus.api.service.RandomEventService;
 import com.monkey.ktplus.api.service.ResourcePackService;
 import com.monkey.ktplus.api.service.ReviewService;
 import com.monkey.ktplus.api.service.RuntimeService;
+import com.monkey.ktplus.api.service.VisualsService;
 import com.monkey.ktplus.api.spi.EffectRegistrationService;
 import org.bukkit.plugin.Plugin;
 
@@ -175,4 +176,12 @@ public interface KtPlus {
      * @return review service
      */
     ReviewService reviews();
+
+    /**
+     * Particle / sound / geometry helpers for effect authors.
+     *
+     * @return visuals service
+     * @since 4.0.5
+     */
+    VisualsService visuals();
 }

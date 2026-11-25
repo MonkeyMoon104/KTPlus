@@ -473,7 +473,6 @@ public final class ConfigSnapshot {
         return main.getBoolean("review-reminder.enabled", true);
     }
 
-    /** Minutes between review reminder sweeps. Clamped to 5–720. */
     public int reviewReminderIntervalMinutes() {
         return Math.max(5, Math.min(720, main.getInt("review-reminder.interval-minutes", 45)));
     }

@@ -1,6 +1,7 @@
 package com.monkey.ktplus.effects.visual;
 
 import com.monkey.ktplus.bridge.VersionBridge;
+import com.monkey.ktplus.effects.visual.display.FxGeometry;
 import com.monkey.ktplus.util.compat.MaterialResolver;
 import com.monkey.ktplus.util.OnceLogger;
 import java.util.Locale;
@@ -17,10 +18,13 @@ import org.bukkit.Registry;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 public final class VisualEffectService {
+    private static final ThreadLocal<@Nullable Player> AUDIENCE = new ThreadLocal<>();
+
     private static final Map<String, String> SOUND_KEYS = Map.ofEntries(
             Map.entry("ITEM_BOOK_PAGE_TURN", "item.book.page_turn"),
             Map.entry("BLOCK_ENCHANTMENT_TABLE_USE", "block.enchantment_table.use"),
@@ -55,6 +59,26 @@ public final class VisualEffectService {
     public VisualEffectService(VersionBridge bridge, OnceLogger onceLogger) {
         this.bridge = Objects.requireNonNull(bridge, "bridge");
         this.onceLogger = Objects.requireNonNull(onceLogger, "onceLogger");
+    }
+
+    /**
+     * Restricts subsequent particle/sound calls on this thread to {@code viewer} only.
+     * Used for private GUI / {@code /kt test} previews.
+     */
+    public static void pushAudience(@Nullable Player viewer) {
+        if (viewer == null) {
+            AUDIENCE.remove();
+        } else {
+            AUDIENCE.set(viewer);
+        }
+    }
+
+    public static void clearAudience() {
+        AUDIENCE.remove();
+    }
+
+    public static @Nullable Player audience() {
+        return AUDIENCE.get();
     }
 
     public void particle(
@@ -120,9 +144,15 @@ public final class VisualEffectService {
         if (location == null || location.getWorld() == null) {
             return;
         }
-        World world = location.getWorld();
         DustOptions dustOptions = new DustOptions(color != null ? color : Color.WHITE, size);
-        world.spawnParticle(Particle.DUST, location, Math.max(0, count), offsetX, offsetY, offsetZ, extra, dustOptions);
+        Player viewer = AUDIENCE.get();
+        if (viewer != null && viewer.isOnline()) {
+            viewer.spawnParticle(
+                    Particle.DUST, location, Math.max(0, count), offsetX, offsetY, offsetZ, extra, dustOptions);
+            return;
+        }
+        location.getWorld()
+                .spawnParticle(Particle.DUST, location, Math.max(0, count), offsetX, offsetY, offsetZ, extra, dustOptions);
     }
 
     public void sound(String name, Location location, float volume, float pitch) {
@@ -134,7 +164,60 @@ public final class VisualEffectService {
         if (key.isEmpty()) {
             return;
         }
+        Player viewer = AUDIENCE.get();
+        if (viewer != null && viewer.isOnline()) {
+            viewer.playSound(location, key, volume, pitch);
+            return;
+        }
         location.getWorld().playSound(location, key, volume, pitch);
+    }
+
+    public void helix(
+            String particleName,
+            Location origin,
+            double radius,
+            double height,
+            int turns,
+            int points,
+            @Nullable Color color) {
+        FxGeometry.helix(origin, radius, height, turns, points, at -> particle(particleName, at, 1, 0, 0, 0, 0, color));
+    }
+
+    public void torus(
+            String particleName,
+            Location origin,
+            double majorRadius,
+            double minorRadius,
+            int majorSteps,
+            int minorSteps,
+            @Nullable Color color) {
+        FxGeometry.torus(
+                origin,
+                majorRadius,
+                minorRadius,
+                majorSteps,
+                minorSteps,
+                at -> particle(particleName, at, 1, 0, 0, 0, 0, color));
+    }
+
+    public void rose(
+            String particleName, Location origin, double radius, int petals, int points, double y, @Nullable Color color) {
+        FxGeometry.rose(origin, radius, petals, points, y, at -> particle(particleName, at, 1, 0, 0, 0, 0, color));
+    }
+
+    public void sphereShell(
+            String particleName, Location origin, double radius, int rings, int pointsPerRing, @Nullable Color color) {
+        FxGeometry.sphereShell(
+                origin, radius, rings, pointsPerRing, at -> particle(particleName, at, 1, 0, 0, 0, 0, color));
+    }
+
+    public void beam(String particleName, Location from, Location to, int points, @Nullable Color color) {
+        FxGeometry.beam(from, to, points, at -> particle(particleName, at, 1, 0, 0, 0, 0, color));
+    }
+
+    public void circle(
+            String particleName, Location origin, double radius, double y, int points, @Nullable Color color) {
+        FxGeometry.circle(origin, radius, y, points, at -> particle(particleName, at, 1, 0, 0, 0, 0, color));
     }
 
     public String entity(String name) {
@@ -166,6 +249,15 @@ public final class VisualEffectService {
         }
         World world = location.getWorld();
         if (world == null) {
+            return;
+        }
+        Player viewer = AUDIENCE.get();
+        if (viewer != null && viewer.isOnline()) {
+            if (data == null) {
+                viewer.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra);
+            } else {
+                viewer.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra, data);
+            }
             return;
         }
         if (data == null) {

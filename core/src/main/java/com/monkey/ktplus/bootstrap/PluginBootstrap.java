@@ -282,6 +282,7 @@ public final class PluginBootstrap {
                     economy,
                     access,
                     selection,
+                    runtime,
                     new PlayerInventoryGuard(new PendingInventoryRepository(database)),
                     guiBackend,
                     onceLogger);
@@ -405,6 +406,10 @@ public final class PluginBootstrap {
 
     public EffectRuntime runtime() {
         return runtime;
+    }
+
+    public VisualEffectService visuals() {
+        return visuals;
     }
 
     public EffectGuiService gui() {

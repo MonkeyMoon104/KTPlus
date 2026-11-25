@@ -29,6 +29,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.Nullable;
 
 public final class EffectSession {
@@ -37,6 +38,7 @@ public final class EffectSession {
     private final String effectId;
     private final boolean heavy;
     private final boolean cosmeticMode;
+    private final boolean privatePreview;
     private final Location origin;
     private final PlatformScheduler scheduler;
     private final TaskRegistry taskRegistry;
@@ -62,11 +64,40 @@ public final class EffectSession {
             TemporaryBlockService temporaryBlocks,
             BlockChangeGuard blockChangeGuard,
             EffectRuntime runtime) {
+        this(
+                id,
+                playerId,
+                effectId,
+                heavy,
+                cosmeticMode,
+                false,
+                origin,
+                scheduler,
+                taskRegistry,
+                temporaryBlocks,
+                blockChangeGuard,
+                runtime);
+    }
+
+    public EffectSession(
+            UUID id,
+            UUID playerId,
+            String effectId,
+            boolean heavy,
+            boolean cosmeticMode,
+            boolean privatePreview,
+            Location origin,
+            PlatformScheduler scheduler,
+            TaskRegistry taskRegistry,
+            TemporaryBlockService temporaryBlocks,
+            BlockChangeGuard blockChangeGuard,
+            EffectRuntime runtime) {
         this.id = Objects.requireNonNull(id, "id");
         this.playerId = Objects.requireNonNull(playerId, "playerId");
         this.effectId = Objects.requireNonNull(effectId, "effectId");
         this.heavy = heavy;
-        this.cosmeticMode = cosmeticMode;
+        this.cosmeticMode = cosmeticMode || privatePreview;
+        this.privatePreview = privatePreview;
         this.origin = Objects.requireNonNull(origin, "origin").clone();
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler");
         this.taskRegistry = Objects.requireNonNull(taskRegistry, "taskRegistry");
@@ -96,6 +127,10 @@ public final class EffectSession {
         return cosmeticMode;
     }
 
+    public boolean privatePreview() {
+        return privatePreview;
+    }
+
     public Location origin() {
         return origin.clone();
     }
@@ -112,7 +147,7 @@ public final class EffectSession {
         ScheduledHandle handle = scheduler.runLater(origin, () -> {
             try {
                 if (active()) {
-                    action.run();
+                    runWithAudience(action);
                 }
             } catch (RuntimeException ex) {
                 cancel(CancellationReason.ERROR);
@@ -167,7 +202,8 @@ public final class EffectSession {
         ScheduledHandle handle = scheduler.runTimer(origin, () -> {
             ScheduledHandle scheduled = reference.get();
             try {
-                if (!active() || !action.getAsBoolean()) {
+                boolean cont = active() && runWithAudience(action);
+                if (!cont) {
                     if (scheduled != null) {
                         scheduled.cancel();
                         taskRegistry.forget(id, scheduled);
@@ -203,7 +239,7 @@ public final class EffectSession {
             setup.accept(entity);
         }
         trackEntity(entity);
-        runLater(removeAfterTicks, entity::remove);
+        runLater(Math.max(1L, removeAfterTicks), entity::remove);
         return entity;
     }
 
@@ -242,6 +278,42 @@ public final class EffectSession {
             return;
         }
         entities.add(entity);
+        if (privatePreview) {
+            hideFromOthers(entity);
+        }
+    }
+
+    private void runWithAudience(Runnable action) {
+        Player viewer = privatePreview ? Bukkit.getPlayer(playerId) : null;
+        VisualEffectService.pushAudience(viewer);
+        try {
+            action.run();
+        } finally {
+            VisualEffectService.clearAudience();
+        }
+    }
+
+    private boolean runWithAudience(BooleanSupplier action) {
+        Player viewer = privatePreview ? Bukkit.getPlayer(playerId) : null;
+        VisualEffectService.pushAudience(viewer);
+        try {
+            return action.getAsBoolean();
+        } finally {
+            VisualEffectService.clearAudience();
+        }
+    }
+
+    private void hideFromOthers(Entity entity) {
+        Player viewer = Bukkit.getPlayer(playerId);
+        if (viewer == null || entity.getWorld() == null) {
+            return;
+        }
+        JavaPlugin plugin = JavaPlugin.getProvidingPlugin(EffectSession.class);
+        for (Player other : entity.getWorld().getPlayers()) {
+            if (!other.getUniqueId().equals(playerId)) {
+                other.hideEntity(plugin, entity);
+            }
+        }
     }
 
     public void releaseEntity(Entity entity) {

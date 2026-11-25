@@ -32,10 +32,6 @@ public final class GuiListener implements Listener {
         if (rawSlot >= 0 && rawSlot < 90) {
             event.setCancelled(true);
         }
-        if (event.getClick().isShiftClick()) {
-            event.setCancelled(true);
-            return;
-        }
         if (event instanceof InventoryCreativeEvent) {
             return;
         }
@@ -46,7 +42,7 @@ public final class GuiListener implements Listener {
                 .get(player)
                 .flatMap(session -> session.action(rawSlot))
                 .ifPresent(action -> {
-                    GuiClickFeedback.play(player);
+                    GuiClickFeedback.play(player, action);
                     gui.handle(player, action, event.getClick());
                 });
     }

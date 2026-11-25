@@ -237,7 +237,6 @@ class ClassicKtImporterTest {
                 try {
                     Files.deleteIfExists(path);
                 } catch (Exception ignored) {
-                    // best effort
                 }
             });
         }

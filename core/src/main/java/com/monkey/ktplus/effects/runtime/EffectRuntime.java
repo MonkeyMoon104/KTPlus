@@ -6,8 +6,8 @@ import com.monkey.ktplus.effects.api.KillEffect;
 import com.monkey.ktplus.effects.list.fireworks.animation.FireworksFinaleService;
 import com.monkey.ktplus.effects.list.fireworks.animation.FireworksMarkedTracker;
 import com.monkey.ktplus.effects.list.fireworks.animation.FireworksSettings;
-import com.monkey.ktplus.effects.visual.VisualEffectService;
 import com.monkey.ktplus.effects.runtime.block.BlockChangeGuard;
+import com.monkey.ktplus.effects.visual.VisualEffectService;
 import com.monkey.ktplus.effects.runtime.block.TemporaryBlockService;
 import com.monkey.ktplus.hook.particleplus.ParticlePlusHook;
 import com.monkey.ktplus.lang.LangService;
@@ -74,13 +74,29 @@ public final class EffectRuntime {
     }
 
     public boolean start(Player killer, Entity victim, Location location, KillEffect effect) {
+        return start(killer, victim, location, effect, false);
+    }
+
+    /**
+     * Private preview for GUI / {@code /kt test}: visible only to {@code killer}, cosmetic-only,
+     * and cancels any previous sessions for that player first.
+     */
+    public boolean startPreview(Player player, KillEffect effect) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(effect, "effect");
+        cancelPlayer(player.getUniqueId(), CancellationReason.PREVIEW_REPLACED);
+        return start(player, player, player.getLocation(), effect, true);
+    }
+
+    private boolean start(
+            Player killer, Entity victim, Location location, KillEffect effect, boolean privatePreview) {
         Set<UUID> playerSessions =
                 sessionsByPlayer.computeIfAbsent(killer.getUniqueId(), ignored -> ConcurrentHashMap.newKeySet());
-        if (playerSessions.size() >= config.maxSessionsPerPlayer()) {
+        if (!privatePreview && playerSessions.size() >= config.maxSessionsPerPlayer()) {
             return false;
         }
         boolean heavy = effect.definition().heavy();
-        if (heavy && heavySessions.get() >= heavyCap()) {
+        if (!privatePreview && heavy && heavySessions.get() >= heavyCap()) {
             return false;
         }
         UUID sessionId = UUID.randomUUID();
@@ -88,8 +104,9 @@ public final class EffectRuntime {
                 sessionId,
                 killer.getUniqueId(),
                 effect.definition().id(),
-                heavy,
-                config.cosmeticMode(),
+                heavy && !privatePreview,
+                config.cosmeticMode() || privatePreview,
+                privatePreview,
                 location,
                 scheduler,
                 taskRegistry,
@@ -98,21 +115,30 @@ public final class EffectRuntime {
                 this);
         sessions.put(sessionId, session);
         playerSessions.add(sessionId);
-        if (heavy) {
+        if (heavy && !privatePreview) {
             heavySessions.incrementAndGet();
         }
 
-        ParticlePlusHook.Suspension particleSuspension = particlePlusHook.suspendNearby(
-                location,
-                config.particlePlusTurnOffRadius(),
-                config.turnOffPlayerParticles(),
-                config.turnOffMobParticles(),
-                config.turnOffBlockParticles(),
-                config.turnOffItemParticles());
-        session.onCleanup(() -> particlePlusHook.resume(particleSuspension));
+        ParticlePlusHook.Suspension particleSuspension = privatePreview
+                ? null
+                : particlePlusHook.suspendNearby(
+                        location,
+                        config.particlePlusTurnOffRadius(),
+                        config.turnOffPlayerParticles(),
+                        config.turnOffMobParticles(),
+                        config.turnOffBlockParticles(),
+                        config.turnOffItemParticles());
+        if (particleSuspension != null) {
+            session.onCleanup(() -> particlePlusHook.resume(particleSuspension));
+        }
 
         try {
-            effect.execute(new EffectContext(killer, victim, location.clone(), config, lang), session);
+            VisualEffectService.pushAudience(privatePreview ? killer : null);
+            try {
+                effect.execute(new EffectContext(killer, victim, location.clone(), config, lang), session);
+            } finally {
+                VisualEffectService.clearAudience();
+            }
             if (!session.active()) {
                 finish(session, CancellationReason.ERROR);
                 return false;

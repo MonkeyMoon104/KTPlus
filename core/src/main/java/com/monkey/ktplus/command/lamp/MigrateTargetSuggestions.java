@@ -8,7 +8,6 @@ import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.node.ExecutionContext;
 
-/** Suggests only the migrate target dialect that is not the live database type. */
 public final class MigrateTargetSuggestions implements SuggestionProvider<BukkitCommandActor> {
     private static volatile Supplier<Collection<String>> source = Collections::emptyList;
 

@@ -38,15 +38,11 @@ Everything around that is built for a real server: economy, storage, permissions
 |:--|:--|
 | **Author** | [MonkeyMoon104](https://github.com/MonkeyMoon104) |
 | **Commands** | `/ktplus` · `/kt` · `/killeffect` |
-| **Default branch** | [`enhanced`](https://github.com/MonkeyMoon104/KTPlus/tree/enhanced) |
 | **License** | [GPL-3.0](LICENSE) |
 
 ---
 
 ## Contents
-
-<details open>
-<summary><strong>For server owners</strong></summary>
 
 - [What you get](#what-you-get)
 - [Requirements](#requirements)
@@ -60,20 +56,9 @@ Everything around that is built for a real server: economy, storage, permissions
 - [Review rewards](#review-rewards)
 - [Integrations](#integrations)
 - [PlaceholderAPI](#placeholderapi)
-- [Troubleshooting](#troubleshooting)
-
-</details>
-
-<details>
-<summary><strong>For developers</strong></summary>
-
 - [Developer API](#developer-api)
-- [Build from source](#build-from-source)
-- [Project layout](#project-layout)
-- [Development](#development)
+- [Troubleshooting](#troubleshooting)
 - [License](#license)
-
-</details>
 
 ---
 
@@ -81,10 +66,10 @@ Everything around that is built for a real server: economy, storage, permissions
 
 | Area | Highlights |
 |------|------------|
-| **Effects** | 71 built-ins (`common` → `ultra`), pricing, damage rules, perks, sessions with blocks / particles / entities / schematics, `/kt test` preview |
-| **Players** | Shop GUI with categories & filters, IF backend + vanilla fallback, optional resource pack for custom sounds |
+| **Effects** | Built-in catalog (`common` → `ultra`), pricing, damage rules, perks, `/kt test` preview |
+| **Players** | Shop GUI with categories, filters, preview, favorites & search |
 | **Economy** | KillCoins (default) or Vault, kill rewards, persistent unlocks, optional LuckPerms grant on buy |
-| **Storage** | SQLite / MySQL / MariaDB / PostgreSQL, Flyway on startup, in-game SQLite ↔ MySQL migrate |
+| **Storage** | SQLite / MySQL / MariaDB / PostgreSQL, in-game SQLite ↔ MySQL migrate |
 | **Platform** | Folia-aware scheduling, WorldGuard respect, update checker, bStats, GitHub / Spigot review rewards |
 
 ---
@@ -106,34 +91,25 @@ Everything around that is built for a real server: economy, storage, permissions
 | [WorldGuard](https://enginehub.org/worldguard) | Region checks for block-changing effects |
 | [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) | Placeholders |
 
-**To build:** JDK 21 (main/core), JDK 25 toolchain for Paper 26.x NMS, Gradle 9.7.1 (wrapper).
-
 ---
 
 ## Supported versions
 
-KTPlus loads the matching NMS bridge at runtime. `plugin.yml` uses `api-version: '1.21'`.
+KTPlus loads the matching NMS bridge at runtime.
 
-| Server | Module | Server | Module |
-|--------|--------|--------|--------|
-| 1.21 / 1.21.1 | `v1_21_1` | 1.21.8 | `v1_21_8` |
-| 1.21.3 | `v1_21_3` | 1.21.9 | `v1_21_9` |
-| 1.21.4 | `v1_21_4` | 1.21.10 | `v1_21_10` |
-| 1.21.5 | `v1_21_5` | 1.21.11 | `v1_21_11` |
-| 1.21.6 | `v1_21_6` | 26.1.x | `v26_1` |
-| 1.21.7 | `v1_21_7` | 26.2.x | `v26_2` |
-| | | 26.3.x | `v26_3` |
+| Paper |
+|-------|
+| 1.21 – 1.21.11 |
+| 26.1.x – 26.3.x |
 
 ---
 
 ## Install
 
-1. Put `KTPlus-4.0.4.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases) or [build it](#build-from-source).
+1. Put `KTPlus-*.jar` in `plugins/` — from [Releases](https://github.com/MonkeyMoon104/KTPlus/releases).
 2. Start once. Configs appear under `plugins/KTPlus/`.
 3. Edit what you need → `/kt reload` or restart.
 4. Upgrading from classic **KT**? Keep `plugins/KT/` (the SQLite files), run **only** KTPlus, then use [`/kt import-kt`](#commands).
-
-> On first load, Paper downloads libraries declared in `plugin.yml`. PacketEvents is prepared by KTPlus’ own runtime loader.
 
 ### Quick start
 
@@ -267,15 +243,15 @@ Hide effects from the shop, tab-complete, `/kt set` / `/kt test`, and kill trigg
 /kt enable cloud
 ```
 
-Tab-complete lists only enabled ids for `disable`, and only disabled ids for `enable`. Open GUIs refresh live. Players who had that effect selected are cleared and notified; ownership stays so they can re-select after `/kt enable`.
+Players who had that effect selected are cleared and notified; ownership stays so they can re-select after `/kt enable`.
 
 ### Language packs
 
-On first start KTPlus creates `plugins/KTPlus/lang/` and copies `EN.yml` (canonical schema).
+On first start KTPlus creates `plugins/KTPlus/lang/` and copies `EN.yml`.
 
-- File names must be **exactly** two uppercase letters + `.yml` (`EN.yml`, `IT.yml`, `ES.yml`). Other names are ignored.
-- Players get the pack matching their client language (`player.locale()`); unknown locales use `default-language` in `config.yml` (default `EN`).
-- Missing keys in a pack fall back to `EN` (console warns). Prefer editing `lang/` for translations; use `messages.yml` only for server-wide overrides.
+- File names must be **exactly** two uppercase letters + `.yml` (`EN.yml`, `IT.yml`, `ES.yml`).
+- Players get the pack matching their client language; unknown locales use `default-language` in `config.yml` (default `EN`).
+- Missing keys fall back to `EN`. Prefer editing `lang/` for translations; use `messages.yml` only for server-wide overrides.
 
 ### Cosmetic mode (visuals only)
 
@@ -343,14 +319,11 @@ database:
   pool-size: 5            # forced to 1 on SQLite
 ```
 
-| Engine | Runtime | Flyway | `/kt migrate` |
-|--------|:-------:|:------:|:-------------:|
-| SQLite | yes (default) | yes | ↔ MySQL |
-| MySQL 8.0+ | yes | yes | ↔ SQLite |
-| MariaDB | yes | yes | via `/kt migrate mysql` (10.5+) |
-| PostgreSQL | yes | yes | — |
-
-Schema is applied with Flyway Java migrations on startup. `/kt migrate` supports SQLite ↔ MySQL/MariaDB (10.5+). PostgreSQL still needs an external data move.
+| Engine | Notes |
+|--------|-------|
+| SQLite | Default |
+| MySQL 8.0+ / MariaDB 10.5+ | `/kt migrate` supports SQLite ↔ MySQL/MariaDB |
+| PostgreSQL | Supported at runtime; data move is external |
 
 ---
 
@@ -366,7 +339,7 @@ Schema is applied with Flyway Java migrations on startup. `/kt migrate` supports
 | GitHub | Star [MonkeyMoon104/KTPlus](https://github.com/MonkeyMoon104/KTPlus) | **500** coins |
 | SpigotMC | Review **4★+** on [125998](https://www.spigotmc.org/resources/125998/) | **100 × stars** (max 500) |
 
-Player starts a session with their **platform** username (not the Minecraft IGN). KTPlus polls for up to **300s** (every **15s**). On success: claim stored, coins paid, short broadcast. One claim per player / platform account — already-claimed responses stay quiet (message only).
+One claim per player / platform account.
 
 ---
 
@@ -377,6 +350,7 @@ Player starts a session with their **platform** username (not the Minecraft IGN)
 | WorldGuard | Respect / bypass in `config.yml` · staff: `ktplus.worldguard.bypass` |
 | LuckPerms | Optional grant on purchase (`luckperms` in `config.yml`) |
 | Vault | `economy.provider: VAULT` |
+| PlaceholderAPI | See [placeholders](#placeholderapi) |
 | Resource pack | `resource-pack.yml` — push on join, SHA-1, required or optional |
 
 ---
@@ -430,7 +404,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.monkey.ktplus:ktplus-api:4.0.4")
+    compileOnly("com.monkey.ktplus:ktplus-api:4.0.5")
 }
 ```
 
@@ -450,69 +424,7 @@ api.registration().register(
 );
 ```
 
-Publish locally with `./gradlew :api:publish` (credentials: `monkeyrepo.user` / `monkeyrepo.secret` in your global `~/.gradle/gradle.properties`).
-
----
-
-## Build from source
-
-```bash
-git clone https://github.com/MonkeyMoon104/KTPlus.git
-cd KTPlus
-git checkout enhanced
-
-./gradlew build        # Linux / macOS
-gradlew.bat build      # Windows
-```
-
-**Output:** `dist/build/libs/KTPlus-4.0.4.jar`
-
-| Task | |
-|------|---|
-| `./gradlew build` | Full build (includes `:dist`) |
-| `./gradlew test` | Unit tests (`:core:test`) |
-| `./gradlew :api:publish` | Publish `ktplus-api` to MonkeyRepo |
-| `./gradlew :dist:shadowJar` | Shaded plugin jar |
-| `./gradlew :dist:verifyPluginJar` | Relocations & library descriptors |
-
-Main/core compiles with **Java 21**. Paper **26.x** NMS modules use a **Java 25** toolchain.
-
-> **paperweight** uses upstream `2.0.0-beta.24`. Inventory Framework uses upstream `0.12.2-SNAPSHOT` from PaperMC.
-
----
-
-## Project layout
-
-```text
-KTPlus/
-├── build-logic/     Gradle conventions + vendor Maven repo
-├── api/             Public developer API (ServicesManager + events)
-├── common/          Shared contracts
-├── nms-bridge/      Version → NMS mapping
-├── NMS/             v1_21_* (reobf) · v26_* (Mojmap)
-├── core/            Logic, configs, effects, GUI, storage
-├── dist/            Distributable shaded jar
-├── gradle/          Version catalog + wrapper
-└── resourcepacks/   Pack assets
-```
-
-| Library kind | Mechanism | Examples |
-|--------------|-----------|----------|
-| Paper `libraries:` | Downloaded by Paper | Jackson, HikariCP, Flyway, OkHttp, JDBC, Lamp |
-| Shaded | Shadow → `com.monkey.ktplus.libs.*` | IF, bStats, ASM, Querz NBT, jar-relocator |
-| Custom loader | Download / relocate on `onLoad` | PacketEvents |
-
----
-
-## Development
-
-- Default branch: **`enhanced`** (force-push and deletion disabled)
-- Dependabot: daily (08:00 Europe/Rome) on the Gradle catalog; Paper API pins ignored — [`.github/dependabot.yml`](.github/dependabot.yml)
-
-| Library | Issue | Status |
-|---------|-------|--------|
-| paperweight-userdev | Gradle 10 `by registering` deprecation | Upstream `2.0.0-beta.24` |
-| Inventory Framework | AIOOBE in `processMethodAnnotations` | Upstream `0.12.2-SNAPSHOT` (fix in [PR #2549](https://github.com/stefvanschie/IF/pull/2549)) |
+Public helpers include `api.visuals()` (particles, sounds, shapes) and session spawn/track/temp-block APIs for Folia-safe multi-phase effects.
 
 ---
 
@@ -520,16 +432,12 @@ KTPlus/
 
 | Symptom | Likely cause | What to try |
 |---------|--------------|-------------|
-| Disables on load | PacketEvents download/relocate failed | Console `[Library]` errors; Maven mirror access |
-| `Library GUI unavailable` | Inventory Framework failure | Build that includes the patched IF vendor artifact |
 | Effects don’t play | Perm / locked / disabled world | `ktplus.<id>.use`, unlock state, `config.yml` worlds |
 | Vault balance stuck | Still on KillCoins | `economy.provider: VAULT` + Vault + economy plugin |
 | Review already claimed | Player or account already used | Expected — one claim each |
 | Migration rejected | Wrong target or MySQL &lt; 8 | sqlite/mysql only; upgrade MySQL |
 | Classic KT data missing after upgrade | Old `plugins/KT/` not imported | `/kt import-kt --dry-run`, then with token |
 | Effects still grief / damage on SMP | Cosmetic mode off / random events on | `cosmetic-mode: true` in `config.yml`; disable `events.yml` |
-
-Reproduce on a test server before raising production log noise.
 
 ---
 

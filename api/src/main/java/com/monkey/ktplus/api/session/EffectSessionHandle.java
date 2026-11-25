@@ -2,7 +2,13 @@ package com.monkey.ktplus.api.session;
 
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Handle for a single in-flight kill-effect session.
@@ -95,6 +101,50 @@ public interface EffectSessionHandle {
      * @param action supplier returning {@code true} to continue, {@code false} to stop
      */
     void runTimer(long delayTicks, long periodTicks, BooleanSupplier action);
+
+    /**
+     * Spawns a tracked entity that is removed after {@code removeAfterTicks} or when the session
+     * ends. Respects cosmetic mode and world-mutation guards.
+     *
+     * @param typeName Bukkit {@link org.bukkit.entity.EntityType} name
+     * @param location spawn location
+     * @param setup optional post-spawn setup
+     * @param removeAfterTicks ticks until auto-remove ({@code >= 1})
+     * @return spawned entity, or {@code null} if spawn was denied / failed
+     * @since 4.0.5
+     */
+    @Nullable
+    Entity spawnEntity(
+            String typeName, Location location, @Nullable Consumer<Entity> setup, long removeAfterTicks);
+
+    /**
+     * Tracks an existing entity so it is removed when the session cleans up.
+     *
+     * @param entity entity to track
+     * @since 4.0.5
+     */
+    void trackEntity(Entity entity);
+
+    /**
+     * Whether temporary block / world mutations are allowed at {@code location} for this session.
+     *
+     * @param actor optional actor (defaults to session owner when {@code null})
+     * @param location target location
+     * @return {@code true} if mutations are allowed
+     * @since 4.0.5
+     */
+    boolean allowsWorldMutation(@Nullable Player actor, Location location);
+
+    /**
+     * Places a temporary block that restores after {@code restoreDelayTicks}, when allowed.
+     *
+     * @param actor optional actor for protection checks
+     * @param block target block
+     * @param material temporary material
+     * @param restoreDelayTicks ticks until restore
+     * @since 4.0.5
+     */
+    void placeTempBlock(@Nullable Player actor, Block block, Material material, long restoreDelayTicks);
 
     /**
      * Cancels this session and runs cleanup hooks.

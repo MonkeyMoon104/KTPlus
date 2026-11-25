@@ -39,7 +39,8 @@ tasks.named<Javadoc>("javadoc") {
 val generateApiVersion =
     tasks.register("generateApiVersion") {
         val outputDir = layout.buildDirectory.dir("generated/sources/apiVersion")
-        inputs.property("projectVersion", project.version.toString())
+        val apiVersion = version.toString()
+        inputs.property("projectVersion", apiVersion)
         outputs.dir(outputDir)
         doLast {
             val packageDir = outputDir.get().asFile.resolve("com/monkey/ktplus/api")
@@ -62,7 +63,7 @@ val generateApiVersion =
                      * Maven/Gradle version of this {@code ktplus-api} artifact (for example {@code
                      * 4.0.3}).
                      */
-                    public static final String VERSION = "${project.version}";
+                    public static final String VERSION = "$apiVersion";
 
                     private ApiVersion() {}
                 }

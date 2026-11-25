@@ -31,7 +31,6 @@ public final class ReviewClaimRepository {
                 accountCacheKey(platform, accountKey), ignored -> loadAccountClaim(platform, accountKey));
     }
 
-    /** True if this player claimed a review reward on any platform. */
     public boolean hasAnyClaim(UUID uuid) {
         Objects.requireNonNull(uuid, "uuid");
         return claimCache.computeIfAbsent(anyClaimKey(uuid), ignored -> loadAnyClaim(uuid));

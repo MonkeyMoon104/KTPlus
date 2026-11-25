@@ -7,5 +7,6 @@ public enum CancellationReason {
     WORLD_UNLOAD,
     RELOAD,
     ERROR,
-    PERFORMANCE_LIMIT
+    PERFORMANCE_LIMIT,
+    PREVIEW_REPLACED
 }

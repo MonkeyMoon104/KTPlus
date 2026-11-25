@@ -15,6 +15,7 @@ import com.monkey.ktplus.listener.effect.EnchantDebrisListener;
 import com.monkey.ktplus.listener.effect.EndEndermanKillListener;
 import com.monkey.ktplus.listener.effect.HeadCollectorListener;
 import com.monkey.ktplus.listener.gui.GuiListener;
+import com.monkey.ktplus.listener.gui.GuiSearchListener;
 import com.monkey.ktplus.listener.gui.PlayerInventoryGuardListener;
 import com.monkey.ktplus.listener.KillListener;
 import com.monkey.ktplus.listener.LifecycleListener;
@@ -54,6 +55,7 @@ public final class PluginListenerRegistrar {
         ResourcePackJoinListener resourcePackJoinListener =
                 new ResourcePackJoinListener(new ResourcePackService(plugin, config));
         manager.registerEvents(new GuiListener(gui), plugin);
+        manager.registerEvents(new GuiSearchListener(gui), plugin);
         manager.registerEvents(new PlayerInventoryGuardListener(gui), plugin);
         manager.registerEvents(new KillListener(bootstrap), plugin);
         manager.registerEvents(new LifecycleListener(runtime, gui, temporaryBlocks, cooldowns), plugin);

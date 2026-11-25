@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.AbstractArrow;
@@ -165,6 +166,20 @@ public final class EntityCompat {
     }
 
     public static void playSound(
+            Player player, Location location, Sound sound, float volume, float pitch) {
+        playSound(player, location, sound, "PLAYERS", volume, pitch);
+    }
+
+    public static void playSound(
+            Player player, Location location, Sound sound, String category, float volume, float pitch) {
+        if (player == null || location == null || sound == null) {
+            return;
+        }
+        SoundCategory soundCategory = SoundCategory.valueOf(category);
+        player.playSound(location, sound, soundCategory, volume, pitch);
+    }
+
+    public static void playSound(
             Player player, Location location, String sound, String category, float volume, float pitch) {
         if (player == null || location == null || sound == null) {
             return;
@@ -222,9 +237,19 @@ public final class EntityCompat {
             return trimmed.toLowerCase(Locale.ROOT);
         }
         String upper = trimmed.toUpperCase(Locale.ROOT);
-        if (upper.startsWith("MUSIC_DISC_")) {
-            return "music_disc." + upper.substring("MUSIC_DISC_".length()).toLowerCase(Locale.ROOT);
-        }
-        return trimmed.toLowerCase(Locale.ROOT).replace('_', '.');
+        
+        return switch (upper) {
+            case "ITEM_BOOK_PAGE_TURN" -> "item.book.page_turn";
+            case "UI_BUTTON_CLICK" -> "ui.button.click";
+            case "BLOCK_NOTE_BLOCK_HARP" -> "block.note_block.harp";
+            case "BLOCK_NOTE_BLOCK_CHIME" -> "block.note_block.chime";
+            case "BLOCK_NOTE_BLOCK_PLING" -> "block.note_block.pling";
+            default -> {
+                if (upper.startsWith("MUSIC_DISC_")) {
+                    yield "music_disc." + upper.substring("MUSIC_DISC_".length()).toLowerCase(Locale.ROOT);
+                }
+                yield trimmed.toLowerCase(Locale.ROOT).replace('_', '.');
+            }
+        };
     }
 }

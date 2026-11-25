@@ -19,6 +19,7 @@ import com.monkey.ktplus.api.bridge.service.BridgeRandomEventService;
 import com.monkey.ktplus.api.bridge.service.BridgeResourcePackService;
 import com.monkey.ktplus.api.bridge.service.BridgeReviewService;
 import com.monkey.ktplus.api.bridge.service.BridgeRuntimeService;
+import com.monkey.ktplus.api.bridge.service.BridgeVisualsService;
 import com.monkey.ktplus.api.service.AccessService;
 import com.monkey.ktplus.api.service.AvailabilityService;
 import com.monkey.ktplus.api.service.ConditionService;
@@ -35,6 +36,7 @@ import com.monkey.ktplus.api.service.RandomEventService;
 import com.monkey.ktplus.api.service.ResourcePackService;
 import com.monkey.ktplus.api.service.ReviewService;
 import com.monkey.ktplus.api.service.RuntimeService;
+import com.monkey.ktplus.api.service.VisualsService;
 import com.monkey.ktplus.api.spi.EffectRegistrationService;
 import com.monkey.ktplus.bootstrap.PluginBootstrap;
 import com.monkey.ktplus.config.ConfigSnapshot;
@@ -61,6 +63,7 @@ public final class KtPlusApiFacade implements KtPlus {
     private final BridgeRandomEventService randomEvents;
     private final BridgeResourcePackService resourcePack;
     private final BridgeReviewService reviews;
+    private final VisualsService visuals;
 
     public KtPlusApiFacade(Plugin plugin, PluginBootstrap bootstrap, EffectPlayPipeline pipeline) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
@@ -84,6 +87,7 @@ public final class KtPlusApiFacade implements KtPlus {
         this.randomEvents = new BridgeRandomEventService(bootstrap.randomEvents(), bootstrap.config());
         this.resourcePack = new BridgeResourcePackService(bootstrap.config());
         this.reviews = new BridgeReviewService(bootstrap.reviews());
+        this.visuals = new BridgeVisualsService(bootstrap.visuals());
     }
 
     public void reload(ConfigSnapshot snapshot, EffectPlayPipeline pipeline) {
@@ -192,5 +196,10 @@ public final class KtPlusApiFacade implements KtPlus {
     @Override
     public ReviewService reviews() {
         return reviews;
+    }
+
+    @Override
+    public VisualsService visuals() {
+        return visuals;
     }
 }

@@ -23,6 +23,14 @@ killcoins-balance: "&a%player% has &f%balance% &acoins."
 killcoins-updated: "&aUpdated balance for &f%player%&a."
 effect-test-started: "&aTesting effect: &f%effect%&a."
 effect-test-failed: "&cCould not start &f%effect%&c (server load limit). Try again in a moment."
+gui-preview-none: "&cNothing to preview — select/shift-click an effect first (Clear keeps last preview)."
+gui-favorite-added: "&aFavorited &f%effect%&a."
+gui-favorite-removed: "&eRemoved &f%effect% &efrom favorites."
+gui-favorites-filter-on: "&dShowing favorites only."
+gui-favorites-filter-off: "&7Favorites filter off."
+gui-search-prompt: "&eType a search query in chat. Type &fcancel &eto abort."
+gui-search-applied: "&aSearch: &f%query%"
+gui-search-cleared: "&7Search cleared."
 headcollector-inherited: "&aYou inherited &f%amount% &aheads."
 
 # --- disable/enable ---
@@ -60,12 +68,53 @@ gui:
       name: "&8Scroll Down"
     filter:
       name: "&6Filter &8| {mode}"
+    preview:
+      name: "<gradient:#67e8f9:#38bdf8>Preview</gradient>"
+    search:
+      name: "<#fbbf24>Search</#fbbf24>"
+      active: "&eSearch: &f{query}"
+    favorites:
+      name: "<gradient:#f472b6:#fb7185>Favorites</gradient>"
+      active: "&dFavorites &aON"
     close:
       name: "&cClose"
     clear:
       name: "&cClear Effect"
     balance:
       name: "&6Coins: &f{balance}"
+  button-lore:
+    preview:
+      - "&7Play a private preview"
+      - "&7of your last / selected effect."
+      - "&8"
+      - "&eClick &7to preview (only you see it)"
+    search:
+      - "&7Filter effects by name or id."
+      - "&8"
+      - "&eLeft-click &7type a query in chat"
+      - "&eRight-click &7clear search"
+      - "&7In chat type &fcancel &7to abort"
+    favorites:
+      - "&7Show only favorited effects."
+      - "&8"
+      - "&eClick &7toggle favorites filter"
+      - "&eRight-click effect &7to favorite"
+    close:
+      - "&7Close the effects menu."
+    clear:
+      - "&7Unequip your selected kill effect."
+      - "&8"
+      - "&eClick &7to clear"
+    balance:
+      - "&7Your KillCoins balance."
+      - "&8"
+      - "&eClick &7to print balance in chat"
+    filter:
+      - "&7Sort for &fthis category &7only"
+      - "&eLeft-click &7next option"
+      - "&eRight-click &7previous option"
+      - "&8"
+      - "{modes}"
   texts:
     empty-effect:
       name: "&f "
@@ -85,26 +134,26 @@ gui:
       HEAVY_FIRST: "Heavy first"
       ID_ASC: "ID A → Z"
     effect-item:
-      name: "&b{name}"
+      name: "<gradient:#38bdf8:#a78bfa>{name}</gradient>"
       lore:
         - "{description}"
         - "{category}"
         - "{status}"
         - "{price}"
         - "{lock}"
+        - "{favorite}"
+        - "&8"
+        - "&eLeft-click &7select"
+        - "&eRight-click &7favorite"
+        - "&eShift-click &7preview"
       status-selected: "&aSelected"
       status-click: "&7Click to select"
       price-free: "&7Price: &aFree"
       price-paid: "&7Price: &f{price} coins"
       lock-unlocked: "&aUnlocked"
       lock-locked: "&cLocked"
-  button-lore:
-    filter:
-      - "&7Sort for &fthis category &7only"
-      - "&eLeft-click &7next option"
-      - "&eRight-click &7previous option"
-      - "&8"
-      - "{modes}"
+      favorite-on: "<#f472b6>★ Favorited</#f472b6>"
+      favorite-off: "&8☆ Favorite"
 
 effects:
   cloud:
@@ -320,3 +369,33 @@ effects:
   cosmicfinale:
     name: "Cosmic Finale"
     description: "&7A cosmic finale ends it all."
+  swordrain:
+    name: "Sword Rain"
+    description: "&7A sky portal opens; swords fall, stick, and spin out."
+  bladevortex:
+    name: "Blade Vortex"
+    description: "&7Orbiting blades pull foes inward, then slash."
+  spearprison:
+    name: "Spear Prison"
+    description: "&7Tridents cage, crush, then burst outward."
+  crystalfracture:
+    name: "Crystal Fracture"
+    description: "&7An amethyst geode grows, cracks, and hunts with shards."
+  riftmaw:
+    name: "Rift Maw"
+    description: "&7A rift opens underfoot, pulls down, then spits survivors."
+  stormcrown:
+    name: "Storm Crown"
+    description: "&7A floating crown chains lightning between nearby players."
+  nebularing:
+    name: "Nebula Ring"
+    description: "&7A cosmic torus spins with orbiting stars."
+  voidimplode:
+    name: "Void Implode"
+    description: "&7Debris spirals inward smoothly, then one void pop."
+  soulharvest:
+    name: "Soul Harvest"
+    description: "&7Soul wisps rise; a harvest ring pulls and reaps once."
+  nightfall:
+    name: "Nightfall"
+    description: "&7A darkness dome, gravity well, then a stellar nova."

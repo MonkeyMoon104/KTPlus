@@ -3,6 +3,7 @@ package com.monkey.ktplus.effects.registry.builtin;
 import com.monkey.ktplus.effects.api.EffectCategory;
 import com.monkey.ktplus.effects.list.alchemy.AlchemyCauldronKillEffect;
 import com.monkey.ktplus.effects.list.aurafarming.AuraFarmingKillEffect;
+import com.monkey.ktplus.effects.list.bladevortex.BladeVortexKillEffect;
 import com.monkey.ktplus.effects.list.crystalspire.CrystalSpireKillEffect;
 import com.monkey.ktplus.effects.list.dimensionalrift.DimensionalRiftKillEffect;
 import com.monkey.ktplus.effects.list.firephoenix.FirePhoenixKillEffect;
@@ -15,6 +16,8 @@ import com.monkey.ktplus.effects.list.prismaticnova.PrismaticNovaKillEffect;
 import com.monkey.ktplus.effects.list.puppetstrings.PuppetStringsKillEffect;
 import com.monkey.ktplus.effects.list.railgun.RailgunKillEffect;
 import com.monkey.ktplus.effects.list.serpentcoil.SerpentCoilKillEffect;
+import com.monkey.ktplus.effects.list.spearprison.SpearPrisonKillEffect;
+import com.monkey.ktplus.effects.list.swordrain.SwordRainKillEffect;
 import com.monkey.ktplus.effects.registry.EffectDefinitionFactory;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
 import com.monkey.ktplus.effects.visual.VisualEffectService;
@@ -81,6 +84,17 @@ public final class EpicEffectsRegistration {
         registry.register(new HauntedChoirKillEffect(
                 definitions.definition(
                         "hauntedchoir", "Haunted Choir", "GOAT_HORN", EffectCategory.EPIC, 8600, true, 200),
+                visuals));
+        registry.register(new SwordRainKillEffect(
+                definitions.definition(
+                        "swordrain", "Sword Rain", "DIAMOND_SWORD", EffectCategory.EPIC, 120000, true, 280),
+                visuals));
+        registry.register(new BladeVortexKillEffect(
+                definitions.definition(
+                        "bladevortex", "Blade Vortex", "DIAMOND_SWORD", EffectCategory.EPIC, 140000, true, 120),
+                visuals));
+        registry.register(new SpearPrisonKillEffect(
+                definitions.definition("spearprison", "Spear Prison", "TRIDENT", EffectCategory.EPIC, 155000, true, 128),
                 visuals));
     }
 }

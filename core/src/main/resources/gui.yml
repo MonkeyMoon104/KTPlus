@@ -1,4 +1,4 @@
-title: "&0KTPlus Effects"
+title: "<gradient:#38bdf8:#a78bfa>KTPlus Effects</gradient>"
 
 rows: 6
 
@@ -6,9 +6,9 @@ structure:
   - "#########"
   - "#EEEEEEEU"
   - "#EEEEEEE#"
-  - "#EEEEEEE#"
   - "#EEEEEEED"
-  - "F#C#Q#B#"
+  - "#########"
+  - "F###C###Q"
 
 ingredients:
   "#":
@@ -28,14 +28,13 @@ ingredients:
     button: filter
   "C":
     type: button
-    button: close
+    button: clear
   "Q":
     type: button
-    button: clear
-  "B":
-    type: button
-    button: balance
+    button: close
 
+# Player inventory (fused): categories stay on the middle row; utility controls on the hotbar.
+# Hotbar fused raw slots 81-89 → P X X S X V X X B
 category-slots:
   - 64
   - 65
@@ -80,21 +79,61 @@ buttons:
   filter:
     material: HOPPER
     name: "&6Filter &8| {mode}"
+    # {mode} is colored in code: orange for None, green for any other filter
     lore:
       - "&7Sort for &fthis category &7only"
       - "&eLeft-click &7next option"
       - "&eRight-click &7previous option"
       - "&8"
       - "{modes}"
+  preview:
+    slot: 81
+    material: ENDER_EYE
+    name: "<gradient:#67e8f9:#38bdf8>Preview</gradient>"
+    lore:
+      - "&7Play a private preview"
+      - "&7of your last / selected effect."
+      - "&8"
+      - "&eClick &7to preview (only you see it)"
+  search:
+    slot: 84
+    material: SPYGLASS
+    name: "<#fbbf24>Search</#fbbf24>"
+    lore:
+      - "&7Filter effects by name or id."
+      - "&8"
+      - "&eLeft-click &7type a query in chat"
+      - "&eRight-click &7clear search"
+      - "&7In chat type &fcancel &7to abort"
+  favorites:
+    slot: 86
+    material: NETHER_STAR
+    name: "<gradient:#f472b6:#fb7185>Favorites</gradient>"
+    lore:
+      - "&7Show only favorited effects."
+      - "&8"
+      - "&eClick &7toggle favorites filter"
+      - "&eRight-click effect &7to favorite"
   close:
-    material: OAK_DOOR
+    material: BARRIER
     name: "&cClose"
+    lore:
+      - "&7Close the effects menu."
   clear:
     material: FIRE_CHARGE
     name: "&cClear Effect"
+    lore:
+      - "&7Unequip your selected kill effect."
+      - "&8"
+      - "&eClick &7to clear"
   balance:
+    slot: 89
     material: GOLD_NUGGET
     name: "&6Coins: &f{balance}"
+    lore:
+      - "&7Your KillCoins balance."
+      - "&8"
+      - "&eClick &7to print balance in chat"
 
 texts:
   empty-effect:
@@ -116,18 +155,26 @@ texts:
     HEAVY_FIRST: "Heavy first"
     ID_ASC: "ID A → Z"
   effect-item:
-    name: "&b{name}"
+    name: "<gradient:#38bdf8:#a78bfa>{name}</gradient>"
     lore:
+      - "{description}"
       - "{category}"
       - "{status}"
       - "{price}"
       - "{lock}"
+      - "{favorite}"
+      - "&8"
+      - "&eLeft-click &7select"
+      - "&eRight-click &7favorite"
+      - "&eShift-click &7preview"
     status-selected: "&aSelected"
     status-click: "&7Click to select"
     price-free: "&7Price: &aFree"
     price-paid: "&7Price: &f{price} coins"
     lock-unlocked: "&aUnlocked"
     lock-locked: "&cLocked"
+    favorite-on: "<#f472b6>★ Favorited</#f472b6>"
+    favorite-off: "&8☆ Favorite"
 
 effects:
   cloud:
@@ -343,3 +390,34 @@ effects:
   cosmicfinale:
     name: "Cosmic Finale"
     material: BEACON
+  swordrain:
+    name: "Sword Rain"
+    material: DIAMOND_SWORD
+  bladevortex:
+    name: "Blade Vortex"
+    material: DIAMOND_SWORD
+  spearprison:
+    name: "Spear Prison"
+    material: TRIDENT
+  crystalfracture:
+    name: "Crystal Fracture"
+    material: PRISMARINE_CRYSTALS
+  riftmaw:
+    name: "Rift Maw"
+    material: END_PORTAL_FRAME
+  stormcrown:
+    name: "Storm Crown"
+    material: LIGHTNING_ROD
+  nebularing:
+    name: "Nebula Ring"
+    material: AMETHYST_SHARD
+  voidimplode:
+    name: "Void Implode"
+    material: ENDER_EYE
+  soulharvest:
+    name: "Soul Harvest"
+    material: SOUL_LANTERN
+
+  nightfall:
+    name: "Nightfall"
+    material: BLACK_CONCRETE

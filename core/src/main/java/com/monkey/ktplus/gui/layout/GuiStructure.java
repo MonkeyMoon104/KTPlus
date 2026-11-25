@@ -76,15 +76,17 @@ public final class GuiStructure {
                 }
             }
         }
-        if (buttonSlots.isEmpty()) {
-            ConfigurationSection buttons = gui.getConfigurationSection("buttons");
-            if (buttons != null) {
-                for (String key : buttons.getKeys(false)) {
-                    if (buttons.isInt(key)) {
-                        buttonSlots.put(key, buttons.getInt(key));
-                    } else if (buttons.isConfigurationSection(key) && buttons.isInt(key + ".slot")) {
-                        buttonSlots.put(key, buttons.getInt(key + ".slot"));
-                    }
+        
+        ConfigurationSection buttons = gui.getConfigurationSection("buttons");
+        if (buttons != null) {
+            for (String key : buttons.getKeys(false)) {
+                if (buttonSlots.containsKey(key)) {
+                    continue;
+                }
+                if (buttons.isInt(key)) {
+                    buttonSlots.put(key, buttons.getInt(key));
+                } else if (buttons.isConfigurationSection(key) && buttons.isInt(key + ".slot")) {
+                    buttonSlots.put(key, buttons.getInt(key + ".slot"));
                 }
             }
         }

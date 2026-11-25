@@ -8,5 +8,8 @@ public enum GuiActionType {
     CLEAR,
     BALANCE,
     CLOSE,
-    FILTER
+    FILTER,
+    PREVIEW,
+    SEARCH,
+    FAVORITES
 }

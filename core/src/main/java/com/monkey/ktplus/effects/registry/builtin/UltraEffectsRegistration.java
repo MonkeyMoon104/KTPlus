@@ -8,6 +8,9 @@ import com.monkey.ktplus.effects.list.headcollector.HeadCollectorKillEffect;
 import com.monkey.ktplus.effects.list.headcollector.HeadCollectorService;
 import com.monkey.ktplus.effects.list.headcollector.HeadCollectorSettings;
 import com.monkey.ktplus.effects.list.sniper.SniperKillEffect;
+import com.monkey.ktplus.effects.list.nightfall.NightfallKillEffect;
+import com.monkey.ktplus.effects.list.soulharvest.SoulHarvestKillEffect;
+import com.monkey.ktplus.effects.list.voidimplode.VoidImplodeKillEffect;
 import com.monkey.ktplus.effects.list.tornado.TornadoKillEffect;
 import com.monkey.ktplus.effects.registry.EffectDefinitionFactory;
 import com.monkey.ktplus.effects.registry.EffectRegistry;
@@ -65,6 +68,18 @@ public final class UltraEffectsRegistration {
                 visuals));
         registry.register(new TornadoKillEffect(
                 definitions.definition("tornado", "Tornado", "WHITE_WOOL", EffectCategory.ULTRA, 1500000, false, 260),
+                visuals));
+        registry.register(new VoidImplodeKillEffect(
+                definitions.definition(
+                        "voidimplode", "Void Implode", "ENDER_EYE", EffectCategory.ULTRA, 950000, true, 200),
+                visuals));
+        registry.register(new SoulHarvestKillEffect(
+                definitions.definition(
+                        "soulharvest", "Soul Harvest", "SOUL_LANTERN", EffectCategory.ULTRA, 1150000, true, 220),
+                visuals));
+        registry.register(new NightfallKillEffect(
+                definitions.definition(
+                        "nightfall", "Nightfall", "BLACK_CONCRETE", EffectCategory.ULTRA, 950000, true, 180),
                 visuals));
     }
 }

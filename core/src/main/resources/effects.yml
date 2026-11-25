@@ -1035,3 +1035,114 @@ effects:
       enabled: true
       value: 7
       radius: 10
+
+  swordrain:
+    category: epic
+    price: 124500
+    perks:
+      sword-count: 20
+      fall-ticks: 13
+      stagger-ticks: 2
+      hold-ticks: 28
+    damage:
+      enabled: true
+      value: 4
+      radius: 7.5
+
+  bladevortex:
+    category: epic
+    price: 140000
+    perks:
+      duration-ticks: 95
+    damage:
+      enabled: true
+      value: 4
+      radius: 6
+
+  spearprison:
+    category: epic
+    price: 155000
+    perks:
+      rise-ticks: 45
+      close-ticks: 55
+    damage:
+      enabled: true
+      value: 5
+      radius: 5.5
+
+  crystalfracture:
+    category: legendary
+    price: 315750
+    perks:
+      crack-ticks: 50
+      shard-count: 18
+    damage:
+      enabled: true
+      value: 5
+      radius: 6
+
+  riftmaw:
+    category: legendary
+    price: 340000
+    perks:
+      open-ticks: 50
+      pull-ticks: 60
+    damage:
+      enabled: true
+      value: 6
+      radius: 7
+
+  stormcrown:
+    category: legendary
+    price: 370000
+    perks:
+      duration-ticks: 220
+      chain-interval: 22
+    damage:
+      enabled: true
+      value: 5
+      radius: 8
+
+  nebularing:
+    category: legendary
+    price: 398850
+    perks:
+      duration-ticks: 140
+      orbiter-count: 8
+    damage:
+      enabled: true
+      value: 4
+      radius: 7
+
+  voidimplode:
+    category: ultra
+    price: 945000
+    perks:
+      orbit-ticks: 55
+      suck-ticks: 50
+    damage:
+      enabled: true
+      value: 8
+      radius: 8
+
+  soulharvest:
+    category: ultra
+    price: 1182500
+    perks:
+      soul-count: 12
+      harvest-ticks: 95
+    damage:
+      enabled: true
+      value: 7
+      radius: 9
+
+  nightfall:
+    category: ultra
+    price: 950000
+    perks:
+      eclipse-ticks: 55
+      umbra-ticks: 50
+    damage:
+      enabled: true
+      value: 10
+      radius: 9

@@ -81,7 +81,7 @@ public final class ReviewRewardService {
         if (!reminderEnabled) {
             return;
         }
-        // First sweep after one full interval so join spam is avoided on boot.
+        
         reminderHandle = scheduler.runGlobalTimer(this::reminderTick, reminderPeriodTicks, reminderPeriodTicks);
     }
 
@@ -209,8 +209,7 @@ public final class ReviewRewardService {
         sendPitch(player, platform, stats);
         ReviewMessages.verifying(player, account, platform);
 
-        // Already starred/reviewed: pay now if eligible and not in DB yet (helps typo retries).
-        // Spigot reviews under 4★ fall through to a normal session so the player can update.
+        
         if (presence.present()) {
             int reward = rewardFor(platform, presence.stars());
             if (reward > 0) {

@@ -472,7 +472,7 @@ public final class ClassicKtImporter {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException ignored) {
-            // Driver may already be loaded by Paper/Hikari.
+            
         }
         return DriverManager.getConnection("jdbc:sqlite:" + dbFile.toAbsolutePath());
     }
@@ -511,11 +511,11 @@ public final class ClassicKtImporter {
                 try {
                     Files.deleteIfExists(path);
                 } catch (IOException ignored) {
-                    // best effort cleanup
+                    
                 }
             });
         } catch (IOException ignored) {
-            // best effort cleanup
+            
         }
     }
 

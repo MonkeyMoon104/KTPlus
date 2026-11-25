@@ -16,7 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -103,8 +105,90 @@ public final class EffectGuiPagePopulator {
             contents[playerSlot] = GuiTheme.categoryTab(definition, category == selectedCategory);
             session.put(rawSlot, GuiAction.category(category));
         }
+        placeBottomButton(
+                session,
+                contents,
+                layout,
+                "preview",
+                buttonItem(
+                        config.guiButtonMaterial("preview", "ENDER_EYE"),
+                        "ENDER_EYE",
+                        lang.guiText(
+                                player,
+                                "buttons.preview.name",
+                                config.guiButtonName("preview", "<gradient:#67e8f9:#38bdf8>Preview</gradient>")),
+                        buttonLore(player, "preview")),
+                GuiAction.simple(GuiActionType.PREVIEW, session.category(), session.scrollOffset()));
+        String searchLabel = session.searchQuery() == null
+                ? lang.guiText(
+                        player,
+                        "buttons.search.name",
+                        config.guiButtonName("search", "<#fbbf24>Search</#fbbf24>"))
+                : lang.guiText(player, "buttons.search.active", "&eSearch: &f{query}")
+                        .replace("{query}", session.searchQuery());
+        placeBottomButton(
+                session,
+                contents,
+                layout,
+                "search",
+                buttonItem(
+                        config.guiButtonMaterial("search", "SPYGLASS"),
+                        "SPYGLASS",
+                        searchLabel,
+                        buttonLore(player, "search")),
+                GuiAction.simple(GuiActionType.SEARCH, session.category(), session.scrollOffset()));
+        String favoritesLabel = session.favoritesOnly()
+                ? lang.guiText(player, "buttons.favorites.active", "&dFavorites &aON")
+                : lang.guiText(
+                        player,
+                        "buttons.favorites.name",
+                        config.guiButtonName(
+                                "favorites", "<gradient:#f472b6:#fb7185>Favorites</gradient>"));
+        placeBottomButton(
+                session,
+                contents,
+                layout,
+                "favorites",
+                buttonItem(
+                        config.guiButtonMaterial("favorites", "NETHER_STAR"),
+                        "NETHER_STAR",
+                        favoritesLabel,
+                        buttonLore(player, "favorites")),
+                GuiAction.simple(GuiActionType.FAVORITES, session.category(), session.scrollOffset()));
+        long balance = economyService.balance(player);
+        placeBottomButton(
+                session,
+                contents,
+                layout,
+                "balance",
+                buttonItem(
+                        config.guiButtonMaterial("balance", "GOLD_NUGGET"),
+                        "GOLD_NUGGET",
+                        lang.guiText(player, "buttons.balance.name", config.guiButtonName("balance", "&6Coins: &f{balance}"))
+                                .replace("{balance}", String.valueOf(balance)),
+                        buttonLore(player, "balance")),
+                GuiAction.simple(GuiActionType.BALANCE, session.category(), session.scrollOffset()));
         inventory.setContents(contents);
         player.updateInventory();
+    }
+
+    private void placeBottomButton(
+            GuiSession session,
+            ItemStack[] contents,
+            GuiLayout layout,
+            String buttonKey,
+            ItemStack item,
+            GuiAction action) {
+        int rawSlot = layout.buttonSlot(config, buttonKey, -1);
+        if (rawSlot < GuiLayout.PLAYER_INVENTORY_OFFSET || rawSlot >= GuiLayout.FUSED_SIZE) {
+            return;
+        }
+        int playerSlot = layout.playerInventoryIndex(rawSlot);
+        if (playerSlot < 0 || playerSlot >= contents.length) {
+            return;
+        }
+        contents[playerSlot] = item;
+        session.put(rawSlot, action);
     }
 
     private void populateTopBorders(GuiLayout layout, GuiChestSlotWriter writer, Set<Integer> reservedSlots) {
@@ -128,14 +212,13 @@ public final class EffectGuiPagePopulator {
         int scrollDownSlot = layout.buttonSlot(config, "scroll-down", 8);
         int filterSlot = layout.buttonSlot(config, "filter", 0);
         int clearSlot = layout.buttonSlot(config, "clear", 4);
-        int closeSlot = layout.buttonSlot(config, "close", 3);
-        int balanceSlot = layout.buttonSlot(config, "balance", 5);
+        int closeSlot = layout.buttonSlot(config, "close", 8);
 
         int visibleCount = config.guiEffectSlots().size();
         boolean canScrollUp = scrollOffset > 0;
         boolean canScrollDown = scrollOffset + visibleCount < totalInCategory;
 
-        addButton(
+        addTopButton(
                 writer,
                 session,
                 layout,
@@ -145,7 +228,7 @@ public final class EffectGuiPagePopulator {
                         ? GuiAction.scroll(GuiActionType.SCROLL_UP, session.category(), Math.max(0, scrollOffset - visibleCount))
                         : null,
                 reservedSlots);
-        addButton(
+        addTopButton(
                 writer,
                 session,
                 layout,
@@ -158,7 +241,7 @@ public final class EffectGuiPagePopulator {
                                 scrollOffset + visibleCount)
                         : null,
                 reservedSlots);
-        addButton(
+        addTopButton(
                 writer,
                 session,
                 layout,
@@ -166,7 +249,7 @@ public final class EffectGuiPagePopulator {
                 GuiTheme.filterHopper(config, lang, player, session.sortMode()),
                 GuiAction.simple(GuiActionType.FILTER, session.category(), scrollOffset),
                 reservedSlots);
-        addButton(
+        addTopButton(
                 writer,
                 session,
                 layout,
@@ -174,32 +257,21 @@ public final class EffectGuiPagePopulator {
                 buttonItem(
                         config.guiButtonMaterial("clear", "FIRE_CHARGE"),
                         "FIREBALL",
-                        lang.guiText(player, "buttons.clear.name", config.guiButtonName("clear", "&cClear Effect"))),
+                        lang.guiText(player, "buttons.clear.name", config.guiButtonName("clear", "&cClear Effect")),
+                        buttonLore(player, "clear")),
                 GuiAction.simple(GuiActionType.CLEAR, session.category(), scrollOffset),
                 reservedSlots);
-        addButton(
+        addTopButton(
                 writer,
                 session,
                 layout,
                 closeSlot,
                 buttonItem(
-                        config.guiButtonMaterial("close", "OAK_DOOR"),
-                        "WOOD_DOOR",
-                        lang.guiText(player, "buttons.close.name", config.guiButtonName("close", "&cClose"))),
+                        config.guiButtonMaterial("close", "BARRIER"),
+                        "BARRIER",
+                        lang.guiText(player, "buttons.close.name", config.guiButtonName("close", "&cClose")),
+                        buttonLore(player, "close")),
                 GuiAction.simple(GuiActionType.CLOSE, session.category(), scrollOffset),
-                reservedSlots);
-        long balance = economyService.balance(player);
-        addButton(
-                writer,
-                session,
-                layout,
-                balanceSlot,
-                buttonItem(
-                        config.guiButtonMaterial("balance", "GOLD_NUGGET"),
-                        "GOLD_NUGGET",
-                        lang.guiText(player, "buttons.balance.name", config.guiButtonName("balance", "&6Coins: &f{balance}"))
-                                .replace("{balance}", String.valueOf(balance))),
-                GuiAction.simple(GuiActionType.BALANCE, session.category(), scrollOffset),
                 reservedSlots);
     }
 
@@ -222,12 +294,12 @@ public final class EffectGuiPagePopulator {
             }
             KillEffect effect = visibleEffects.get(index);
             session.put(slot, GuiAction.effect(effect.definition().id(), session.category(), session.scrollOffset()));
-            writer.set(slot, renderEffect(player, effect.definition()));
+            writer.set(slot, renderEffect(session, player, effect.definition()));
             reservedSlots.add(slot);
         }
     }
 
-    private ItemStack renderEffect(Player player, EffectDefinition definition) {
+    private ItemStack renderEffect(GuiSession session, Player player, EffectDefinition definition) {
         ItemStack item = definition.iconItem();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
@@ -248,8 +320,13 @@ public final class EffectGuiPagePopulator {
         String lock = unlocked
                 ? lang.guiText(player, "texts.effect-item.lock-unlocked", "&aUnlocked")
                 : lang.guiText(player, "texts.effect-item.lock-locked", "&cLocked");
+        boolean favorite = session.isFavorite(definition.id());
+        String favoriteLine = favorite
+                ? lang.guiText(player, "texts.effect-item.favorite-on", "<#f472b6>★ Favorited</#f472b6>")
+                : lang.guiText(player, "texts.effect-item.favorite-off", "&8☆ Favorite");
 
-        String nameTemplate = lang.guiText(player, "texts.effect-item.name", "&b{name}");
+        String nameTemplate = lang.guiText(
+                player, "texts.effect-item.name", "<gradient:#38bdf8:#a78bfa>{name}</gradient>");
         meta.displayName(TextFormatter.component(nameTemplate.replace("{name}", displayName)));
 
         List<String> override = config.effectGuiLoreOverride(definition.id());
@@ -257,15 +334,37 @@ public final class EffectGuiPagePopulator {
                 ? lang.guiTextList(
                         player,
                         "texts.effect-item.lore",
-                        List.of("{description}", "{category}", "{status}", "{price}", "{lock}"))
+                        List.of(
+                                "{description}",
+                                "{category}",
+                                "{status}",
+                                "{price}",
+                                "{lock}",
+                                "{favorite}",
+                                "&8",
+                                "&eLeft-click &7select",
+                                "&eRight-click &7favorite",
+                                "&eShift-click &7preview"))
                 : override;
 
         List<String> lore = new ArrayList<>();
         for (String line : template) {
-            lore.add(TextFormatter.color(applyEffectPlaceholders(
-                    line, displayName, description, categoryName, status, price, lock, definition.price())));
+            lore.add(applyEffectPlaceholders(
+                    line,
+                    displayName,
+                    description,
+                    categoryName,
+                    status,
+                    price,
+                    lock,
+                    favoriteLine,
+                    definition.price()));
         }
         meta.lore(lore.stream().map(TextFormatter::component).toList());
+        if (favorite || selected) {
+            meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
         item.setItemMeta(meta);
         return item;
     }
@@ -278,6 +377,7 @@ public final class EffectGuiPagePopulator {
             String status,
             String price,
             String lock,
+            String favorite,
             int rawPrice) {
         return line.replace("{name}", name)
                 .replace("{description}", description)
@@ -285,10 +385,11 @@ public final class EffectGuiPagePopulator {
                 .replace("{status}", status)
                 .replace("{price}", price)
                 .replace("{lock}", lock)
+                .replace("{favorite}", favorite)
                 .replace("{raw_price}", String.format("%,d", rawPrice));
     }
 
-    private void addButton(
+    private void addTopButton(
             GuiChestSlotWriter writer,
             GuiSession session,
             GuiLayout layout,
@@ -296,10 +397,12 @@ public final class EffectGuiPagePopulator {
             ItemStack item,
             GuiAction action,
             Set<Integer> reservedSlots) {
-        if (slot < 0 || slot >= layout.size() || action == null) {
-            if (slot >= 0 && slot < layout.size()) {
-                addDecor(writer, layout, slot, item, reservedSlots);
-            }
+        
+        if (slot < 0 || slot >= layout.size()) {
+            return;
+        }
+        if (action == null) {
+            addDecor(writer, layout, slot, item, reservedSlots);
             return;
         }
         session.put(slot, action);
@@ -316,11 +419,26 @@ public final class EffectGuiPagePopulator {
         writer.set(slot, item);
     }
 
+    private List<String> buttonLore(Player player, String buttonKey) {
+        List<String> fromConfig = config.guiButtonLore(buttonKey);
+        if (!fromConfig.isEmpty()) {
+            return fromConfig;
+        }
+        return lang.guiTextList(player, "button-lore." + buttonKey, List.of());
+    }
+
     private ItemStack buttonItem(String materialKey, String fallbackKey, String name) {
+        return buttonItem(materialKey, fallbackKey, name, List.of());
+    }
+
+    private ItemStack buttonItem(String materialKey, String fallbackKey, String name, List<String> loreLines) {
         ItemStack item = new ItemStack(MaterialResolver.resolve(materialKey, fallbackKey));
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.displayName(TextFormatter.component(name));
+            if (loreLines != null && !loreLines.isEmpty()) {
+                meta.lore(loreLines.stream().map(TextFormatter::component).toList());
+            }
             item.setItemMeta(meta);
         }
         return item;

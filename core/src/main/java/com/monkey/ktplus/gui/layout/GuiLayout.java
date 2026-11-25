@@ -59,7 +59,8 @@ public final class GuiLayout {
         Objects.requireNonNull(config, "config");
         Objects.requireNonNull(key, "key");
         int configured = config.guiButtonSlot(key, -1);
-        if (configured >= 0 && configured < size) {
+        
+        if (configured >= 0 && configured < FUSED_SIZE) {
             return configured;
         }
         return toolbarBaseSlot + toolbarColumn;

@@ -3,6 +3,10 @@ package com.monkey.ktplus.effects.registry.builtin;
 import com.monkey.ktplus.effects.api.EffectCategory;
 import com.monkey.ktplus.effects.list.abyssgate.AbyssGateKillEffect;
 import com.monkey.ktplus.effects.list.arcade.ArcadeCabinetKillEffect;
+import com.monkey.ktplus.effects.list.crystalfracture.CrystalFractureKillEffect;
+import com.monkey.ktplus.effects.list.nebularing.NebulaRingKillEffect;
+import com.monkey.ktplus.effects.list.riftmaw.RiftMawKillEffect;
+import com.monkey.ktplus.effects.list.stormcrown.StormCrownKillEffect;
 import com.monkey.ktplus.effects.list.chronosphere.ChronosphereKillEffect;
 import com.monkey.ktplus.effects.list.cosmicfinale.CosmicFinaleKillEffect;
 import com.monkey.ktplus.effects.list.crownofash.CrownOfAshKillEffect;
@@ -91,6 +95,28 @@ public final class LegendaryEffectsRegistration {
         registry.register(new WardenKillEffect(
                 definitions.definition(
                         "warden", "Warden", "SCULK_SHRIEKER", EffectCategory.LEGENDARY, 490000, true, 120),
+                visuals));
+        registry.register(new CrystalFractureKillEffect(
+                definitions.definition(
+                        "crystalfracture",
+                        "Crystal Fracture",
+                        "PRISMARINE_CRYSTALS",
+                        EffectCategory.LEGENDARY,
+                        320000,
+                        true,
+                        210),
+                visuals));
+        registry.register(new RiftMawKillEffect(
+                definitions.definition(
+                        "riftmaw", "Rift Maw", "END_PORTAL_FRAME", EffectCategory.LEGENDARY, 340000, true, 145),
+                visuals));
+        registry.register(new StormCrownKillEffect(
+                definitions.definition(
+                        "stormcrown", "Storm Crown", "LIGHTNING_ROD", EffectCategory.LEGENDARY, 370000, true, 220),
+                visuals));
+        registry.register(new NebulaRingKillEffect(
+                definitions.definition(
+                        "nebularing", "Nebula Ring", "AMETHYST_SHARD", EffectCategory.LEGENDARY, 395000, true, 160),
                 visuals));
     }
 }
